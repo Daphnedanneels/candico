@@ -104,9 +104,11 @@
 				this.load.image('wiel', 'assets/images/wiel.png');
 				this.load.image('waterbackground', 'assets/images/waterbackground.png');
 				this.load.image('watersprite', 'assets/images/watersprite.png');
+				this.load.image('cloudsprite', 'assets/images/clouds01.png');
 				this.load.image('background', 'assets/images/background.jpg');
 				this.load.image('water', 'assets/images/water.png');
 				this.load.image('sail', 'assets/images/sail.png');
+				this.load.image('sun', 'assets/images/zon.png');
 				this.load.image('ship', 'assets/images/ship.png');
 				this.load.spritesheet('buttons', 'assets/images/buttons.png', 50, 50, 2);
 				this.load.image('navigatie-01', 'assets/images/navigatie-01.png');
@@ -162,6 +164,10 @@
 
 	var _objectsWaterBackground2 = _interopRequireDefault(_objectsWaterBackground);
 
+	var _objectsCloudBackground = __webpack_require__(9);
+
+	var _objectsCloudBackground2 = _interopRequireDefault(_objectsCloudBackground);
+
 	var _objectsShipGroup = __webpack_require__(4);
 
 	var _objectsShipGroup2 = _interopRequireDefault(_objectsShipGroup);
@@ -183,6 +189,7 @@
 			value: function create() {
 				console.log('main');
 				this.game.physics.startSystem(Phaser.Physics.ARCADE);
+				this.game.stage.backgroundColor = '#BEE2E7';
 
 				//TODO: onnodige waarden kuisen
 				this.previousDegree = 0;
@@ -192,8 +199,6 @@
 				this.windDegrees = 0;
 				this.windSpeed = 20;
 				this.shipSpeed = 0;
-				this.waterMovementlala = [];
-				this.waterMovement = this.game.add.group();
 				this.direction = 1;
 				this.snelheid = 1;
 				this.directionToPull = 1;
@@ -208,22 +213,26 @@
 				this.totalDistance = 300000;
 				this.scrollX = 100;
 				this.scrollY = 30;
+				// this.xPosOnScreen = -1000;
 
 				this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
 				this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
 
-				this.background = this.add.sprite(0, -100, 'background');
+				this.sun = this.game.add.sprite(-100, -200, 'sun');
+				this.cloudBackground = new _objectsCloudBackground2['default'](this.game, 0, 0, 800, 200);
+				this.game.add.existing(this.cloudBackground);
 
-				this.waterBackground = new _objectsWaterBackground2['default'](this.game, 0, 100, 800, 400);
+				this.waterBackground = new _objectsWaterBackground2['default'](this.game, 0, 200, 800, 300);
 				this.game.add.existing(this.waterBackground);
+				// OF
+				this.waterGroup = new _objectsWaterGroup2['default'](this.game);
 
 				this.ship = new _objectsShipGroup2['default'](this.game);
 
 				//TODO: navigation in shipGroup steken.
 				this.navigation();
 
-				//TODO: sails in shipGroup steken
-				//TODO: onInputDOWN (zolang er geklikt wordt ++)
+				//TODO: sails in shipGroup steken.
 				this.sails();
 
 				this.windroos = this.game.add.sprite(20, this.game.height - 65, 'windroos');
@@ -257,18 +266,23 @@
 				this.turnSpeed = 250 - this.shipSpeed * 2;
 				this.previousRouteDegree += this.difference / this.turnSpeed;
 
+				//zonsysteem
+				this.angleDifference = this.navigatie02.angle - this.navigatie01.angle;
+				this.xPosOnScreen = Math.floor((this.angleDifference - 150) * 16.66);
+				this.sun.x = -100 + this.xPosOnScreen;
+
 				if (this.leftKey.isDown) {
 
 					this.navigatie01.angle -= 0.45;
 					this.ship.wheel.angle--;
-					this.background.x -= 0.8;
-					this.scrollX = this.turnSpeed;
+					// this.clouds.x -= 0.8;
+					this.scrollX--;
 				} else if (this.rightKey.isDown) {
 
 					this.navigatie01.angle += 0.45;
 					this.ship.wheel.angle++;
-					this.background.x -= 0.8;
-					this.scrollX = this.turnSpeed;
+					// this.clouds.x -= 0.8;
+					this.scrollX++;
 				}
 
 				//adjust sails
@@ -300,14 +314,19 @@
 				//pull ship!
 				this.currentSpeed = this.directionToPull * (this.windSpeed / 2) / 200;
 				this.navigatie01.angle += this.currentSpeed;
-				this.background.x += this.directionToPull;
+
+				this.steerSpeed = this.directionToPull * (this.windSpeed / 2) / 100;
+				if (this.scrollX < 200 && this.scrollX > -200) {
+					this.scrollX += this.steerSpeed;
+				} else {
+					this.scrollX += this.directionToPull / 100;
+				}
 
 				this.distanceMap();
 				//scrollX is afhankelijk van de windduwendesnelheid, het manueel bewegen van het schip
-				//scrollX moet links en rechts kunnen!
-				//scrollX moet continue worden geupdate.
-				this.scrollY = this.shipSpeed * 2; // JUIST
+				this.scrollY = this.shipSpeed * 4; // JUIST
 				this.waterBackground.changeScroll(this.scrollX, this.scrollY);
+				this.cloudBackground.changeScroll(this.scrollX / 5, 0);
 			}
 		}, {
 			key: 'changeWindVector',
@@ -354,18 +373,42 @@
 				}
 			}
 		}, {
+			key: 'getDirectionForDegree',
+			value: function getDirectionForDegree(degree) {
+				if (degree < 22) {
+					direction = 'n';
+					this.windroos.frameName = 'sterren-01';
+				} else if (degree < 67) {
+					direction = 'no';
+					this.windroos.frameName = 'sterren-05';
+				} else if (degree < 112) {
+					direction = 'o';
+					this.windroos.frameName = 'sterren-03';
+				} else if (degree < 157) {
+					direction = 'zo';
+					this.windroos.frameName = 'sterren-06';
+				} else if (degree < 202) {
+					direction = 'z';
+					this.windroos.frameName = 'sterren-04';
+				} else if (degree < 247) {
+					direction = 'zw';
+					this.windroos.frameName = 'sterren-08';
+				} else if (degree < 292) {
+					direction = 'w';
+					this.windroos.frameName = 'sterren-02';
+				} else if (degree < 337) {
+					direction = 'nw';
+					this.windroos.frameName = 'sterren-07';
+				} else {
+					// degree > 337
+					direction = 'n';
+					this.windroos.frameName = 'sterren-01';
+				}
+			}
+		}, {
 			key: 'determinDirection',
 			value: function determinDirection(degree) {
 				var direction = undefined;
-
-				//is dit nodig?!
-				if (degree < 0) {
-					degree = 360 + degree;
-				}
-				if (degree > 360) {
-					degree = degree - 360;
-				}
-				//
 
 				if (degree > 337 || degree < 22) {
 					direction = 'n';
@@ -433,7 +476,6 @@
 			key: 'updateTime',
 			value: function updateTime() {
 				this.timeCounter++;
-				console.log(this.timeCounter);
 				this.timeLeft = 180 - this.timeCounter;
 				if (this.timeLeft == 0) {
 					this.gameOver();
@@ -451,7 +493,7 @@
 				this.rightSailButton.scale.setTo(-1, 1);
 				// this.rightSailButton.inputEnabled = true;
 
-				this.leftButton = this.game.add.sprite(this.game.width / 2 - 100, 100, 'buttons', 0);
+				this.leftButton = this.game.add.sprite(this.game.width / 2 - 150, 100, 'buttons', 0);
 				this.leftButton.inputEnabled = true;
 				this.rightButton = this.game.add.sprite(this.game.width / 2 + 100, 100, 'buttons', 0);
 				// this.rightButton.scale.setTo(-1, 1);
@@ -470,7 +512,7 @@
 		}, {
 			key: 'gameOver',
 			value: function gameOver() {
-				this.game.state.start('gameOver');
+				this.game.state.start('GameOver');
 			}
 		}]);
 
@@ -574,7 +616,7 @@
 
 			this.ship = game.add.sprite(this.x, 0, 'ship');
 			this.add(this.ship);
-			this.wheel = game.add.sprite(this.x + this.ship.width / 2, game.height - 80, 'wiel');
+			this.wheel = game.add.sprite(this.x + this.ship.width / 2, game.height - 50, 'wiel');
 			this.wheel.anchor.set(0.5);
 			this.add(this.wheel);
 		}
@@ -602,8 +644,6 @@
 		value: true
 	});
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -624,24 +664,19 @@
 
 			_get(Object.getPrototypeOf(WaterGroup.prototype), 'constructor', this).call(this, game);
 
-			this.waterGroup = this.game.add.group();
-
 			// this.enableBody = true;
 
 			for (var i = 0; i < 10; i++) {
 				var x = this.game.rnd.integerInRange(-1000, -10);
 				var random = this.game.rnd.integerInRange(-50, 50);
 				this.water = new _objectsWater2['default'](game, x, 150 + i * 30, random);
-				this.waterGroup.add(this.water);
+				this.add(this.water);
 			}
-			// this.add(this.waterGroup);
 		}
 
-		_createClass(WaterGroup, [{
-			key: 'update',
-			value: function update() {}
-		}]);
-
+		// update(){
+		// 	//TODO: loop over added waters en hun update manueel oproepen
+		// }
 		return WaterGroup;
 	})(Phaser.Group);
 
@@ -721,6 +756,7 @@
 			key: 'create',
 			value: function create() {
 				console.log('GameOver');
+				// this.gameOverText = this.game.add.text();
 			}
 		}, {
 			key: 'update',
@@ -731,6 +767,47 @@
 	})(Phaser.State);
 
 	exports['default'] = GameOver;
+	module.exports = exports['default'];
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CloudBackground = (function (_Phaser$TileSprite) {
+		_inherits(CloudBackground, _Phaser$TileSprite);
+
+		function CloudBackground(game, x, y, width, height) {
+			_classCallCheck(this, CloudBackground);
+
+			_get(Object.getPrototypeOf(CloudBackground.prototype), 'constructor', this).call(this, game, x, y, width, height, 'cloudsprite');
+			this.autoScroll(-20, 80);
+		}
+
+		_createClass(CloudBackground, [{
+			key: 'changeScroll',
+			value: function changeScroll(richtingX, richtingY) {
+				this.autoScroll(richtingX, richtingY);
+			}
+		}]);
+
+		return CloudBackground;
+	})(Phaser.TileSprite);
+
+	exports['default'] = CloudBackground;
 	module.exports = exports['default'];
 
 /***/ }

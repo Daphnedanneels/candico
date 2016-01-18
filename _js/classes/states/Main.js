@@ -1,6 +1,7 @@
 import Water from '../objects/Water';
 import WaterGroup from '../objects/WaterGroup';
 import WaterBackground from '../objects/WaterBackground';
+import CloudBackground from '../objects/CloudBackground';
 import ShipGroup from '../objects/ShipGroup';
 
 export default class Main extends Phaser.State{
@@ -11,6 +12,7 @@ export default class Main extends Phaser.State{
 	create(){
 		console.log('main');
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
+		this.game.stage.backgroundColor = '#BEE2E7';
 
 		//TODO: onnodige waarden kuisen
 		this.previousDegree = 0;
@@ -20,8 +22,6 @@ export default class Main extends Phaser.State{
 		this.windDegrees = 0;
 		this.windSpeed = 20;
 		this.shipSpeed = 0;
-		this.waterMovementlala = [];
-		this.waterMovement = this.game.add.group();
 		this.direction = 1;
 		this.snelheid = 1;
 		this.directionToPull = 1;
@@ -36,22 +36,26 @@ export default class Main extends Phaser.State{
 		this.totalDistance = 300000;
 		this.scrollX = 100;
 		this.scrollY = 30;
+		// this.xPosOnScreen = -1000;
 
 		this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
     	this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
 
-		this.background = this.add.sprite(0,-100, 'background');
+    	this.sun = this.game.add.sprite(-100, -200, 'sun');
+    	this.cloudBackground = new CloudBackground(this.game, 0, 0, 800, 200);
+		this.game.add.existing(this.cloudBackground);
 
-		this.waterBackground = new WaterBackground(this.game, 0,100, 800, 400);
+		this.waterBackground = new WaterBackground(this.game, 0, 200, 800, 300);
 		this.game.add.existing(this.waterBackground);
+		// OF
+		this.waterGroup = new WaterGroup(this.game);
 
 		this.ship = new ShipGroup(this.game);
 
 		//TODO: navigation in shipGroup steken.
 		this.navigation();
 
-		//TODO: sails in shipGroup steken
-		//TODO: onInputDOWN (zolang er geklikt wordt ++)
+		//TODO: sails in shipGroup steken.
 		this.sails();
 		
 		this.windroos = this.game.add.sprite(20, this.game.height - 65, 'windroos');
@@ -84,16 +88,21 @@ export default class Main extends Phaser.State{
 		this.turnSpeed = 250 - (this.shipSpeed*2);
 		this.previousRouteDegree += this.difference/this.turnSpeed;
 
+		//zonsysteem
+		this.angleDifference = this.navigatie02.angle - this.navigatie01.angle;
+		this.xPosOnScreen = Math.floor((this.angleDifference - 150) * 16.66);
+		this.sun.x = -100 + this.xPosOnScreen;
+
 		if(this.leftKey.isDown){ 
 			this.navigatie01.angle -= 0.45;
 			this.ship.wheel.angle --;
-			this.background.x -= 0.8;
-			this.scrollX = this.turnSpeed;
+			// this.clouds.x -= 0.8;
+			this.scrollX --;
 		}else if(this.rightKey.isDown){ 
 			this.navigatie01.angle += 0.45;
 			this.ship.wheel.angle ++;
-			this.background.x -= 0.8;
-			this.scrollX = this.turnSpeed;
+			// this.clouds.x -= 0.8;
+			this.scrollX ++;
 		}
 
 		//adjust sails
@@ -125,14 +134,20 @@ export default class Main extends Phaser.State{
 		//pull ship!
 		this.currentSpeed = this.directionToPull*(this.windSpeed/2)/200;
 		this.navigatie01.angle += this.currentSpeed;
-		this.background.x += this.directionToPull;
+
+		this.steerSpeed = this.directionToPull*(this.windSpeed/2)/100;
+		if(this.scrollX < 200 && this.scrollX > -200){
+			this.scrollX += this.steerSpeed;
+		}else {
+			this.scrollX += this.directionToPull/100;
+		}
+		
 
 		this.distanceMap();
 		//scrollX is afhankelijk van de windduwendesnelheid, het manueel bewegen van het schip
-		//scrollX moet links en rechts kunnen!
-		//scrollX moet continue worden geupdate.
-		this.scrollY = this.shipSpeed*2; // JUIST
+		this.scrollY = this.shipSpeed*4; // JUIST
 		this.waterBackground.changeScroll(this.scrollX, this.scrollY);
+		this.cloudBackground.changeScroll(this.scrollX/5, 0);
 		
 	}
 
@@ -175,18 +190,41 @@ export default class Main extends Phaser.State{
 		}
 	}
 
+	getDirectionForDegree(degree) {
+		if(degree < 22){
+			direction = 'n';
+			this.windroos.frameName = 'sterren-01';
+		} else if(degree < 67){
+			direction = 'no';
+			this.windroos.frameName = 'sterren-05';
+		} else if(degree < 112){
+			direction = 'o';
+			this.windroos.frameName = 'sterren-03';
+		} else if(degree < 157){
+			direction = 'zo';
+			this.windroos.frameName = 'sterren-06';
+		} else if(degree < 202){
+			direction = 'z';
+			this.windroos.frameName = 'sterren-04';
+		} else if(degree < 247){
+			direction = 'zw';
+			this.windroos.frameName = 'sterren-08';
+		} else if(degree < 292){
+			direction = 'w';
+			this.windroos.frameName = 'sterren-02';
+		} else if(degree < 337){
+			direction = 'nw';
+			this.windroos.frameName = 'sterren-07';
+		} else {
+			// degree > 337
+			direction = 'n';
+			this.windroos.frameName = 'sterren-01';
+		}
+	}
+
 	determinDirection(degree){
 		let direction;
 
-		//is dit nodig?!
-		if(degree < 0){
-			degree = 360 + degree;
-		}
-		if(degree > 360){
-			degree = degree - 360;
-		}
-		//
-		
 		if(degree > 337 || degree < 22){
 			direction = 'n';
 			this.windroos.frameName = 'sterren-01';
@@ -250,7 +288,6 @@ export default class Main extends Phaser.State{
 
 	updateTime(){
 		this.timeCounter++;
-		console.log(this.timeCounter);
 		this.timeLeft = 180-this.timeCounter;
 		if(this.timeLeft == 0){
 			this.gameOver();
@@ -267,7 +304,7 @@ export default class Main extends Phaser.State{
 		this.rightSailButton.scale.setTo(-1, 1);
 		// this.rightSailButton.inputEnabled = true;
 
-		this.leftButton = this.game.add.sprite(this.game.width/2 - 100, 100, 'buttons', 0);
+		this.leftButton = this.game.add.sprite(this.game.width/2 - 150, 100, 'buttons', 0);
 		this.leftButton.inputEnabled = true;
 		this.rightButton = this.game.add.sprite(this.game.width/2 + 100, 100, 'buttons', 0);
 		// this.rightButton.scale.setTo(-1, 1);
@@ -284,6 +321,6 @@ export default class Main extends Phaser.State{
 	}
 
 	gameOver(){
-		this.game.state.start('gameOver');
+		this.game.state.start('GameOver');
 	}
 }
