@@ -41,14 +41,11 @@ export default class Main extends Phaser.State{
 		this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
     	this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
 
-    	this.sun = this.game.add.sprite(-100, -200, 'sun');
+    	this.sun = this.game.add.sprite(-100, -50, 'sun');
     	this.cloudBackground = new CloudBackground(this.game, 0, 0, 800, 200);
 		this.game.add.existing(this.cloudBackground);
 
-		this.waterBackground = new WaterBackground(this.game, 0, 200, 800, 300);
-		this.game.add.existing(this.waterBackground);
-		// OF
-		this.waterGroup = new WaterGroup(this.game);
+		this.waterGroup = new WaterGroup(this.game, -150, 0);
 
 		this.ship = new ShipGroup(this.game);
 
@@ -56,7 +53,7 @@ export default class Main extends Phaser.State{
 		this.navigation();
 
 		//TODO: sails in shipGroup steken.
-		this.sails();
+		// this.sails();
 		
 		this.windroos = this.game.add.sprite(20, this.game.height - 65, 'windroos');
 		this.kmh = this.game.add.text(80,this.game.height - 50, "", { font: '16px helvetica', fill: '#FFFFFF' });
@@ -90,7 +87,7 @@ export default class Main extends Phaser.State{
 
 		//zonsysteem
 		this.angleDifference = this.navigatie02.angle - this.navigatie01.angle;
-		this.xPosOnScreen = Math.floor((this.angleDifference - 150) * 16.66);
+		this.xPosOnScreen = Math.floor((this.angleDifference - 110) * 7.14);
 		this.sun.x = -100 + this.xPosOnScreen;
 
 		if(this.leftKey.isDown){ 
@@ -106,28 +103,28 @@ export default class Main extends Phaser.State{
 		}
 
 		//adjust sails
-		this.leftButton.events.onInputDown.add(this.leftHandler, this);
-    	this.rightButton.events.onInputDown.add(this.rightHandler, this);
-    	if(this.leftSail == true){
-    		if(this.leftSailButton.y < -100){
-    			this.leftSailButton.y ++;
+		this.ship.leftButton.events.onInputDown.add(this.leftHandler, this);
+    	this.ship.rightButton.events.onInputDown.add(this.rightHandler, this);
+    	if(this.ship.leftSail == true){
+    		if(this.ship.leftSailButton.y < -100){
+    			this.ship.leftSailButton.y ++;
     		}
     		//hoe lager zijl, hoe groter boostkracht
-    		this.boostSpeed = (180 + this.leftSailButton.y)/145;
+    		this.boostSpeed = (180 + this.ship.leftSailButton.y)/145;
     		this.navigatie01.angle -= this.boostSpeed;
     	} else {
-    		if(this.leftSailButton.y > -180){
-    			this.leftSailButton.y --;
+    		if(this.ship.leftSailButton.y > -180){
+    			this.ship.leftSailButton.y --;
     		}
     	}
-    	if(this.rightSail == true){
+    	if(this.ship.rightSail == true){
     		this.navigatie01.angle += 0.55;
-    		if(this.rightSailButton.y < -100){
-    			this.rightSailButton.y ++;
+    		if(this.ship.rightSailButton.y < -100){
+    			this.ship.rightSailButton.y ++;
     		}
     	} else {
-    		if(this.rightSailButton.y > -180){
-    			this.rightSailButton.y --;
+    		if(this.ship.rightSailButton.y > -180){
+    			this.ship.rightSailButton.y --;
     		}
     	}
 
@@ -141,13 +138,17 @@ export default class Main extends Phaser.State{
 		}else {
 			this.scrollX += this.directionToPull/100;
 		}
-		
+		// console.log(this.scrollX);
+
 
 		this.distanceMap();
 		//scrollX is afhankelijk van de windduwendesnelheid, het manueel bewegen van het schip
 		this.scrollY = this.shipSpeed*4; // JUIST
-		this.waterBackground.changeScroll(this.scrollX, this.scrollY);
+		// this.waterBackground.changeScroll(this.scrollX, this.scrollY);
 		this.cloudBackground.changeScroll(this.scrollX/5, 0);
+		this.waterGroup.forEach(function(water) {
+	    	water.changeScroll(this.scrollX, this.scrollY);
+		}, this);
 		
 	}
 
@@ -215,8 +216,7 @@ export default class Main extends Phaser.State{
 		} else if(degree < 337){
 			direction = 'nw';
 			this.windroos.frameName = 'sterren-07';
-		} else {
-			// degree > 337
+		} else { // degree > 337
 			direction = 'n';
 			this.windroos.frameName = 'sterren-01';
 		}
@@ -261,31 +261,34 @@ export default class Main extends Phaser.State{
 	}
 
 	leftHandler(){
-		if(this.leftSail == true){
-			this.leftSail = false;
-			this.leftButton.frame = 0;
+		if(this.ship.leftSail == true){
+			this.ship.leftSail = false;
+			this.ship.leftButton.frame = 0;
 		} else {
-			this.leftSail = true;
-			this.leftButton.frame = 1;
+			this.ship.leftSail = true;
+			this.ship.leftButton.frame = 1;
 		}
 		
-		this.rightSail = false;
-		this.rightButton.frame = 0;
+		this.ship.rightSail = false;
+		this.ship.rightButton.frame = 0;
 	}
 
 	rightHandler(){
-		if(this.rightSail == true){
-			this.rightSail = false;
-			this.rightButton.frame = 0;
+		if(this.ship.rightSail == true){
+			this.ship.rightSail = false;
+			this.ship.rightButton.frame = 0;
 		} else {
-			this.rightSail = true;
-			this.rightButton.frame = 1;
+			this.ship.rightSail = true;
+			this.ship.rightButton.frame = 1;
 		}
 
-		this.leftSail = false;
-		this.leftButton.frame = 0;
+		this.ship.leftSail = false;
+		this.ship.leftButton.frame = 0;
 	}
-
+	speedUpdate(){
+		this.yolo = this.game.rnd.integerInRange(0,500);
+		return this.yolo;
+	}
 	updateTime(){
 		this.timeCounter++;
 		this.timeLeft = 180-this.timeCounter;
@@ -295,20 +298,6 @@ export default class Main extends Phaser.State{
 		this.distanceLeft = Math.floor(this.totalDistance - this.currentDistance);
 		this.timeLeftText.setText('Je hebt nog ' + this.timeLeft + ' seconden');
 		this.distanceText.setText('Nog ' + this.distanceLeft + ' meter te gaan');
-	}
-
-	sails(){
-		this.leftSailButton = this.game.add.sprite(this.game.width/2 - 300, this.sailLeftY, 'sail', 0);
-		// this.leftSailButton.inputEnabled = true;
-		this.rightSailButton = this.game.add.sprite(this.game.width/2 + 300, this.sailRightY, 'sail', 0);
-		this.rightSailButton.scale.setTo(-1, 1);
-		// this.rightSailButton.inputEnabled = true;
-
-		this.leftButton = this.game.add.sprite(this.game.width/2 - 150, 100, 'buttons', 0);
-		this.leftButton.inputEnabled = true;
-		this.rightButton = this.game.add.sprite(this.game.width/2 + 100, 100, 'buttons', 0);
-		// this.rightButton.scale.setTo(-1, 1);
-		this.rightButton.inputEnabled = true;
 	}
 
 	navigation(){

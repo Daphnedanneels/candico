@@ -56,6 +56,14 @@
 
 	var _classesStatesMain2 = _interopRequireDefault(_classesStatesMain);
 
+	var _classesStatesMenu = __webpack_require__(11);
+
+	var _classesStatesMenu2 = _interopRequireDefault(_classesStatesMenu);
+
+	var _classesStatesTryOut = __webpack_require__(10);
+
+	var _classesStatesTryOut2 = _interopRequireDefault(_classesStatesTryOut);
+
 	var _classesStatesGameOver = __webpack_require__(8);
 
 	var _classesStatesGameOver2 = _interopRequireDefault(_classesStatesGameOver);
@@ -64,6 +72,8 @@
 		var game = new Phaser.Game(800, 500, Phaser.AUTO);
 		game.state.add('Main', _classesStatesMain2['default'], false);
 		game.state.add('GameOver', _classesStatesGameOver2['default'], false);
+		game.state.add('Menu', _classesStatesMenu2['default'], false);
+		game.state.add('TryOut', _classesStatesTryOut2['default'], false);
 		game.state.add('Preload', _classesStatesPreload2['default'], false);
 		game.state.start('Preload');
 	};
@@ -106,10 +116,10 @@
 				this.load.image('watersprite', 'assets/images/watersprite.png');
 				this.load.image('cloudsprite', 'assets/images/clouds01.png');
 				this.load.image('background', 'assets/images/background.jpg');
-				this.load.image('water', 'assets/images/water.png');
+				this.load.image('water', 'assets/images/water2.png');
 				this.load.image('sail', 'assets/images/sail.png');
 				this.load.image('sun', 'assets/images/zon.png');
-				this.load.image('ship', 'assets/images/ship.png');
+				this.load.image('ship', 'assets/images/ship2.png');
 				this.load.spritesheet('buttons', 'assets/images/buttons.png', 50, 50, 2);
 				this.load.image('navigatie-01', 'assets/images/navigatie-01.png');
 				this.load.image('navigatie-02', 'assets/images/navigatie-02.png');
@@ -218,14 +228,11 @@
 				this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
 				this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
 
-				this.sun = this.game.add.sprite(-100, -200, 'sun');
+				this.sun = this.game.add.sprite(-100, -50, 'sun');
 				this.cloudBackground = new _objectsCloudBackground2['default'](this.game, 0, 0, 800, 200);
 				this.game.add.existing(this.cloudBackground);
 
-				this.waterBackground = new _objectsWaterBackground2['default'](this.game, 0, 200, 800, 300);
-				this.game.add.existing(this.waterBackground);
-				// OF
-				this.waterGroup = new _objectsWaterGroup2['default'](this.game);
+				this.waterGroup = new _objectsWaterGroup2['default'](this.game, -150, 0);
 
 				this.ship = new _objectsShipGroup2['default'](this.game);
 
@@ -233,7 +240,7 @@
 				this.navigation();
 
 				//TODO: sails in shipGroup steken.
-				this.sails();
+				// this.sails();
 
 				this.windroos = this.game.add.sprite(20, this.game.height - 65, 'windroos');
 				this.kmh = this.game.add.text(80, this.game.height - 50, "", { font: '16px helvetica', fill: '#FFFFFF' });
@@ -268,7 +275,7 @@
 
 				//zonsysteem
 				this.angleDifference = this.navigatie02.angle - this.navigatie01.angle;
-				this.xPosOnScreen = Math.floor((this.angleDifference - 150) * 16.66);
+				this.xPosOnScreen = Math.floor((this.angleDifference - 110) * 7.14);
 				this.sun.x = -100 + this.xPosOnScreen;
 
 				if (this.leftKey.isDown) {
@@ -286,28 +293,28 @@
 				}
 
 				//adjust sails
-				this.leftButton.events.onInputDown.add(this.leftHandler, this);
-				this.rightButton.events.onInputDown.add(this.rightHandler, this);
-				if (this.leftSail == true) {
-					if (this.leftSailButton.y < -100) {
-						this.leftSailButton.y++;
+				this.ship.leftButton.events.onInputDown.add(this.leftHandler, this);
+				this.ship.rightButton.events.onInputDown.add(this.rightHandler, this);
+				if (this.ship.leftSail == true) {
+					if (this.ship.leftSailButton.y < -100) {
+						this.ship.leftSailButton.y++;
 					}
 					//hoe lager zijl, hoe groter boostkracht
-					this.boostSpeed = (180 + this.leftSailButton.y) / 145;
+					this.boostSpeed = (180 + this.ship.leftSailButton.y) / 145;
 					this.navigatie01.angle -= this.boostSpeed;
 				} else {
-					if (this.leftSailButton.y > -180) {
-						this.leftSailButton.y--;
+					if (this.ship.leftSailButton.y > -180) {
+						this.ship.leftSailButton.y--;
 					}
 				}
-				if (this.rightSail == true) {
+				if (this.ship.rightSail == true) {
 					this.navigatie01.angle += 0.55;
-					if (this.rightSailButton.y < -100) {
-						this.rightSailButton.y++;
+					if (this.ship.rightSailButton.y < -100) {
+						this.ship.rightSailButton.y++;
 					}
 				} else {
-					if (this.rightSailButton.y > -180) {
-						this.rightSailButton.y--;
+					if (this.ship.rightSailButton.y > -180) {
+						this.ship.rightSailButton.y--;
 					}
 				}
 
@@ -321,12 +328,16 @@
 				} else {
 					this.scrollX += this.directionToPull / 100;
 				}
+				// console.log(this.scrollX);
 
 				this.distanceMap();
 				//scrollX is afhankelijk van de windduwendesnelheid, het manueel bewegen van het schip
 				this.scrollY = this.shipSpeed * 4; // JUIST
-				this.waterBackground.changeScroll(this.scrollX, this.scrollY);
+				// this.waterBackground.changeScroll(this.scrollX, this.scrollY);
 				this.cloudBackground.changeScroll(this.scrollX / 5, 0);
+				this.waterGroup.forEach(function (water) {
+					water.changeScroll(this.scrollX, this.scrollY);
+				}, this);
 			}
 		}, {
 			key: 'changeWindVector',
@@ -447,30 +458,36 @@
 		}, {
 			key: 'leftHandler',
 			value: function leftHandler() {
-				if (this.leftSail == true) {
-					this.leftSail = false;
-					this.leftButton.frame = 0;
+				if (this.ship.leftSail == true) {
+					this.ship.leftSail = false;
+					this.ship.leftButton.frame = 0;
 				} else {
-					this.leftSail = true;
-					this.leftButton.frame = 1;
+					this.ship.leftSail = true;
+					this.ship.leftButton.frame = 1;
 				}
 
-				this.rightSail = false;
-				this.rightButton.frame = 0;
+				this.ship.rightSail = false;
+				this.ship.rightButton.frame = 0;
 			}
 		}, {
 			key: 'rightHandler',
 			value: function rightHandler() {
-				if (this.rightSail == true) {
-					this.rightSail = false;
-					this.rightButton.frame = 0;
+				if (this.ship.rightSail == true) {
+					this.ship.rightSail = false;
+					this.ship.rightButton.frame = 0;
 				} else {
-					this.rightSail = true;
-					this.rightButton.frame = 1;
+					this.ship.rightSail = true;
+					this.ship.rightButton.frame = 1;
 				}
 
-				this.leftSail = false;
-				this.leftButton.frame = 0;
+				this.ship.leftSail = false;
+				this.ship.leftButton.frame = 0;
+			}
+		}, {
+			key: 'speedUpdate',
+			value: function speedUpdate() {
+				this.yolo = this.game.rnd.integerInRange(0, 500);
+				return this.yolo;
 			}
 		}, {
 			key: 'updateTime',
@@ -483,21 +500,6 @@
 				this.distanceLeft = Math.floor(this.totalDistance - this.currentDistance);
 				this.timeLeftText.setText('Je hebt nog ' + this.timeLeft + ' seconden');
 				this.distanceText.setText('Nog ' + this.distanceLeft + ' meter te gaan');
-			}
-		}, {
-			key: 'sails',
-			value: function sails() {
-				this.leftSailButton = this.game.add.sprite(this.game.width / 2 - 300, this.sailLeftY, 'sail', 0);
-				// this.leftSailButton.inputEnabled = true;
-				this.rightSailButton = this.game.add.sprite(this.game.width / 2 + 300, this.sailRightY, 'sail', 0);
-				this.rightSailButton.scale.setTo(-1, 1);
-				// this.rightSailButton.inputEnabled = true;
-
-				this.leftButton = this.game.add.sprite(this.game.width / 2 - 150, 100, 'buttons', 0);
-				this.leftButton.inputEnabled = true;
-				this.rightButton = this.game.add.sprite(this.game.width / 2 + 100, 100, 'buttons', 0);
-				// this.rightButton.scale.setTo(-1, 1);
-				this.rightButton.inputEnabled = true;
 			}
 		}, {
 			key: 'navigation',
@@ -540,22 +542,19 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var Water = (function (_Phaser$Sprite) {
-		_inherits(Water, _Phaser$Sprite);
+	var Water = (function (_Phaser$TileSprite) {
+		_inherits(Water, _Phaser$TileSprite);
 
-		function Water(game, x, y, randomMove) {
+		function Water(game, x, y, randomMove, scale) {
 			_classCallCheck(this, Water);
 
-			_get(Object.getPrototypeOf(Water.prototype), 'constructor', this).call(this, game, x, y, 'water');
+			_get(Object.getPrototypeOf(Water.prototype), 'constructor', this).call(this, game, x, y, 1800, 150, 'water');
 			game.add.existing(this);
-
-			this.checkWorldBounds = true;
-			this.outOfBoundsKill = true;
 
 			this.x = x;
 			this.game = game;
 
-			this.scale.setTo(1, 0.4);
+			this.scale.setTo(1, scale);
 			this.snelheid = 1;
 			this.direction = 1;
 			this.waterMovement = randomMove;
@@ -564,13 +563,17 @@
 		_createClass(Water, [{
 			key: 'update',
 			value: function update() {
-				this.x += this.waterMove() / 20; // + turnSpeed * direction;
-				// this.y += 0.5;
+				this.x += this.waterMove() / 30;
+				// this.y ++;
+			}
+		}, {
+			key: 'changeScroll',
+			value: function changeScroll(richtingX, richtingY) {
+				this.autoScroll(richtingX, 0);
 			}
 		}, {
 			key: 'waterMove',
 			value: function waterMove() {
-				//snelheid = 0 when turning?
 				if (this.waterMovement > 50 || this.waterMovement < -50) {
 					this.direction *= -1;
 				}
@@ -580,7 +583,7 @@
 		}]);
 
 		return Water;
-	})(Phaser.Sprite);
+	})(Phaser.TileSprite);
 
 	exports['default'] = Water;
 	module.exports = exports['default'];
@@ -612,19 +615,54 @@
 			_get(Object.getPrototypeOf(ShipGroup.prototype), 'constructor', this).call(this, game);
 
 			this.x = 0;
+			this.game = game;
 			this.enableBody = true;
+			this.snelheid = 1;
+			this.direction = 1;
+			this.waterMovement = 20;
+			this.leftSail = false;
+			this.rightSail = false;
+			this.sailLeftY = -160;
+			this.sailRightY = -160;
 
-			this.ship = game.add.sprite(this.x, 0, 'ship');
+			this.ship = game.add.sprite(this.x, -50, 'ship');
 			this.add(this.ship);
 			this.wheel = game.add.sprite(this.x + this.ship.width / 2, game.height - 50, 'wiel');
 			this.wheel.anchor.set(0.5);
 			this.add(this.wheel);
+			this.sails();
+			this.add(this.leftSailButton);
+			this.add(this.rightSailButton);
 		}
 
 		_createClass(ShipGroup, [{
 			key: 'update',
 			value: function update() {
-				// this.x++;
+				this.y += this.waterMove() / 200;
+			}
+		}, {
+			key: 'waterMove',
+			value: function waterMove() {
+				if (this.waterMovement > 50 || this.waterMovement < -50) {
+					this.direction *= -1;
+				}
+				this.waterMovement += this.snelheid * this.direction;
+				return this.waterMovement;
+			}
+		}, {
+			key: 'sails',
+			value: function sails() {
+				this.leftSailButton = this.game.add.sprite(this.game.width / 2 - 300, this.sailLeftY, 'sail', 0);
+				// this.leftSailButton.inputEnabled = true;
+				this.rightSailButton = this.game.add.sprite(this.game.width / 2 + 300, this.sailRightY, 'sail', 0);
+				this.rightSailButton.scale.setTo(-1, 1);
+				// this.rightSailButton.inputEnabled = true;
+
+				this.leftButton = this.game.add.sprite(this.game.width / 2 - 150, 100, 'buttons', 0);
+				this.leftButton.inputEnabled = true;
+				this.rightButton = this.game.add.sprite(this.game.width / 2 + 100, 100, 'buttons', 0);
+				// this.rightButton.scale.setTo(-1, 1);
+				this.rightButton.inputEnabled = true;
 			}
 		}]);
 
@@ -664,12 +702,11 @@
 
 			_get(Object.getPrototypeOf(WaterGroup.prototype), 'constructor', this).call(this, game);
 
-			// this.enableBody = true;
-
-			for (var i = 0; i < 10; i++) {
-				var x = this.game.rnd.integerInRange(-1000, -10);
+			for (var i = 0; i < 12; i++) {
+				var x = this.game.rnd.integerInRange(-1000, -50);
 				var random = this.game.rnd.integerInRange(-50, 50);
-				this.water = new _objectsWater2['default'](game, x, 150 + i * 30, random);
+				var scale = 0.05 + i / 10;
+				this.water = new _objectsWater2['default'](game, x, 150 + i * (3 + i * 0.8), random, scale);
 				this.add(this.water);
 			}
 		}
@@ -808,6 +845,94 @@
 	})(Phaser.TileSprite);
 
 	exports['default'] = CloudBackground;
+	module.exports = exports['default'];
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var TryOut = (function (_Phaser$State) {
+		_inherits(TryOut, _Phaser$State);
+
+		function TryOut() {
+			_classCallCheck(this, TryOut);
+
+			_get(Object.getPrototypeOf(TryOut.prototype), 'constructor', this).apply(this, arguments);
+		}
+
+		_createClass(TryOut, [{
+			key: 'create',
+			value: function create() {
+				console.log('TryOut');
+				// this.gameOverText = this.game.add.text();
+			}
+		}, {
+			key: 'update',
+			value: function update() {}
+		}]);
+
+		return TryOut;
+	})(Phaser.State);
+
+	exports['default'] = TryOut;
+	module.exports = exports['default'];
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Menu = (function (_Phaser$State) {
+		_inherits(Menu, _Phaser$State);
+
+		function Menu() {
+			_classCallCheck(this, Menu);
+
+			_get(Object.getPrototypeOf(Menu.prototype), 'constructor', this).apply(this, arguments);
+		}
+
+		_createClass(Menu, [{
+			key: 'create',
+			value: function create() {
+				console.log('Menu');
+				// this.gameOverText = this.game.add.text();
+			}
+		}, {
+			key: 'update',
+			value: function update() {}
+		}]);
+
+		return Menu;
+	})(Phaser.State);
+
+	exports['default'] = Menu;
 	module.exports = exports['default'];
 
 /***/ }

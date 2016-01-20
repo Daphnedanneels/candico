@@ -4,12 +4,11 @@ export default class WaterGroup extends Phaser.Group{
 	constructor(game) {
 		super(game);
 
-		// this.enableBody = true;
-
-		for (var i = 0; i < 10; i++) {
-			let x = this.game.rnd.integerInRange(-1000, -10);
+		for (var i = 0; i < 12; i++) {
+			let x = this.game.rnd.integerInRange(-1000, -50);
 			let random = this.game.rnd.integerInRange(-50, 50);
-			this.water = new Water(game, x, 150 + i*30, random);
+			let scale = 0.05 + (i/10);
+			this.water = new Water(game, x, 150 + (i*(3+(i*0.8))), random, scale);
 			this.add(this.water);
 		}
 	}
