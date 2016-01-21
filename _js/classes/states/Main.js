@@ -13,6 +13,7 @@ export default class Main extends Phaser.State{
 		console.log('main');
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		this.game.stage.backgroundColor = '#BEE2E7';
+		this.background = this.game.add.sprite(0,0,'background');
 
 		//TODO: onnodige waarden kuisen
 		this.previousDegree = 0;
@@ -42,7 +43,7 @@ export default class Main extends Phaser.State{
     	this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
 
     	this.sun = this.game.add.sprite(-100, -50, 'sun');
-    	this.cloudBackground = new CloudBackground(this.game, 0, 0, 800, 200);
+    	this.cloudBackground = new CloudBackground(this.game, 0, 0, 850, 200);
 		this.game.add.existing(this.cloudBackground);
 
 		this.waterGroup = new WaterGroup(this.game, -150, 0);
@@ -53,14 +54,14 @@ export default class Main extends Phaser.State{
 		this.navigation();
 
 		//TODO: sails in shipGroup steken.
-		// this.sails();
+		this.sailButtons();
 		
-		this.windroos = this.game.add.sprite(20, this.game.height - 65, 'windroos');
-		this.kmh = this.game.add.text(80,this.game.height - 50, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.yourSpeed = this.game.add.text(this.game.width - 200,this.game.height - 50, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.speedUpText = this.game.add.text(this.game.width - 200,this.game.height - 80, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.distanceText = this.game.add.text(20, 40, "Je hebt nog " + this.distanceLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.timeLeftText = this.game.add.text(20, 20, "Je hebt nog " + this.timeLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.windroos = this.game.add.sprite(40, this.game.height - 100, 'windroos');
+		this.kmh = this.game.add.text(100,this.game.height - 85, "", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.yourSpeed = this.game.add.text(this.game.width - 205,this.game.height - 70, "", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.speedUpText = this.game.add.text(this.game.width - 205,this.game.height - 95, "", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.distanceText = this.game.add.text(40, 60, "Je hebt nog " + this.distanceLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.timeLeftText = this.game.add.text(40, 40, "Je hebt nog " + this.timeLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
 
 		this.changeDirection();
 		//per seconde de timeCounter omhoog -> max. 180 seconden.
@@ -68,6 +69,8 @@ export default class Main extends Phaser.State{
 		this.game.time.events.loop(2000, this.changeWindVector, this);
 		this.game.time.events.loop(10000, this.changeDirection, this);
 		this.game.time.events.loop(15000, this.changeRouteDirection, this);
+
+		this.frame = this.game.add.sprite(0,0, 'frame');
 	}
 	
 	update(){
@@ -103,27 +106,27 @@ export default class Main extends Phaser.State{
 		}
 
 		//adjust sails
-		this.ship.leftButton.events.onInputDown.add(this.leftHandler, this);
-    	this.ship.rightButton.events.onInputDown.add(this.rightHandler, this);
+		this.leftButton.events.onInputDown.add(this.leftHandler, this);
+    	this.rightButton.events.onInputDown.add(this.rightHandler, this);
     	if(this.ship.leftSail == true){
-    		if(this.ship.leftSailButton.y < -100){
+    		if(this.ship.leftSailButton.y < -50){
     			this.ship.leftSailButton.y ++;
     		}
     		//hoe lager zijl, hoe groter boostkracht
-    		this.boostSpeed = (180 + this.ship.leftSailButton.y)/145;
+    		this.boostSpeed = (200 + this.ship.leftSailButton.y)/145;
     		this.navigatie01.angle -= this.boostSpeed;
     	} else {
-    		if(this.ship.leftSailButton.y > -180){
+    		if(this.ship.leftSailButton.y > -200){
     			this.ship.leftSailButton.y --;
     		}
     	}
     	if(this.ship.rightSail == true){
     		this.navigatie01.angle += 0.55;
-    		if(this.ship.rightSailButton.y < -100){
+    		if(this.ship.rightSailButton.y < -50){
     			this.ship.rightSailButton.y ++;
     		}
     	} else {
-    		if(this.ship.rightSailButton.y > -180){
+    		if(this.ship.rightSailButton.y > -200){
     			this.ship.rightSailButton.y --;
     		}
     	}
@@ -263,27 +266,27 @@ export default class Main extends Phaser.State{
 	leftHandler(){
 		if(this.ship.leftSail == true){
 			this.ship.leftSail = false;
-			this.ship.leftButton.frame = 0;
+			this.leftButton.frame = 0;
 		} else {
 			this.ship.leftSail = true;
-			this.ship.leftButton.frame = 1;
+			this.leftButton.frame = 1;
 		}
 		
 		this.ship.rightSail = false;
-		this.ship.rightButton.frame = 0;
+		this.rightButton.frame = 0;
 	}
 
 	rightHandler(){
 		if(this.ship.rightSail == true){
 			this.ship.rightSail = false;
-			this.ship.rightButton.frame = 0;
+			this.rightButton.frame = 0;
 		} else {
 			this.ship.rightSail = true;
-			this.ship.rightButton.frame = 1;
+			this.rightButton.frame = 1;
 		}
 
 		this.ship.leftSail = false;
-		this.ship.leftButton.frame = 0;
+		this.leftButton.frame = 0;
 	}
 	speedUpdate(){
 		this.yolo = this.game.rnd.integerInRange(0,500);
@@ -299,13 +302,20 @@ export default class Main extends Phaser.State{
 		this.timeLeftText.setText('Je hebt nog ' + this.timeLeft + ' seconden');
 		this.distanceText.setText('Nog ' + this.distanceLeft + ' meter te gaan');
 	}
+	sailButtons(){
+		this.leftButton = this.game.add.sprite(this.game.width/2 - 150, 150, 'buttons', 0);
+		this.leftButton.inputEnabled = true;
+		this.rightButton = this.game.add.sprite(this.game.width/2 + 100, 150, 'buttons', 0);
+		// this.rightButton.scale.setTo(-1, 1);
+		this.rightButton.inputEnabled = true;
+	}
 
 	navigation(){
-		this.navigatie03 = this.add.sprite(this.game.width - 80, 90, 'navigatie-03');
+		this.navigatie03 = this.add.sprite(this.game.width - 115, 120, 'navigatie-03');
 		this.navigatie03.anchor.set(0.5);
-		this.navigatie02 = this.add.sprite(this.game.width - 80, 90, 'navigatie-02');
+		this.navigatie02 = this.add.sprite(this.game.width - 115, 120, 'navigatie-02');
 		this.navigatie02.anchor.set(0.5);
-		this.navigatie01 = this.add.sprite(this.game.width - 80, 90, 'navigatie-01');
+		this.navigatie01 = this.add.sprite(this.game.width - 115, 120, 'navigatie-01');
 		this.navigatie01.anchor.set(0.5);
 	}
 

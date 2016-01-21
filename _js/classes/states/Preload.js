@@ -5,8 +5,10 @@ export default class Preload extends Phaser.State{
 		this.load.image('waterbackground', 'assets/images/waterbackground.png');
 		this.load.image('watersprite', 'assets/images/watersprite.png');
 		this.load.image('cloudsprite', 'assets/images/clouds01.png');
-		this.load.image('background', 'assets/images/background.jpg');
-		this.load.image('water', 'assets/images/water2.png');
+		this.load.image('background', 'assets/images/background.png');
+		this.load.image('frame', 'assets/web/frame.png');
+		this.load.image('button', 'assets/web/button.png');
+		this.load.image('water', 'assets/images/water.png');
 		this.load.image('sail', 'assets/images/sail.png');
 		this.load.image('sun', 'assets/images/zon.png');
 		this.load.image('ship', 'assets/images/ship2.png');
@@ -18,7 +20,7 @@ export default class Preload extends Phaser.State{
 
 	create(){
 		console.log('preload');
-		this.game.state.start('Main');
+		this.game.state.start('Menu');
 	}
 	
 	update(){
