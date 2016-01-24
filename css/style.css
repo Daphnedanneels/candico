@@ -71,6 +71,7 @@ header {
   background-attachment: fixed;
   background-size: cover;
   width: 100%;
+  overflow: hidden;
   height: 700px;
   display: block;
   text-align: center;
@@ -117,11 +118,11 @@ header h2 {
   width: 250px;
 }
 
-.gold {
+.stick {
   position: absolute;
-  top: -50px;
-  left: 10px;
-  width: 250px;
+  top: 0px;
+  left: -100px;
+  width: 400px;
 }
 
 .rope {
@@ -135,9 +136,9 @@ header h2 {
 .crystal {
   position: absolute;
   z-index: 99;
-  width: 500px;
-  bottom: -130px;
-  right: 0;
+  width: 680px;
+  bottom: -200px;
+  right: -150px;
 }
 
 .sugarcane {
@@ -153,6 +154,26 @@ header h2 {
   margin: -70px 0 50px;
   border-radius: 50%;
   box-shadow: 5px 5px 2em rgba(0, 0, 0, 0.6);
+}
+
+.riet-luik {
+  background-image: url("/assets/web/riet-luik.png");
+  background-repeat: no-repeat;
+  height: 750px;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.biet-luik {
+  background-image: url("/assets/web/biet-luik.png");
+  background-repeat: no-repeat;
+  height: 750px;
+  width: 1000px;
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 button {
@@ -194,9 +215,11 @@ button {
   border-top: 5px solid #ab5821;
   border-bottom: 5px solid #ab5821;
   border-image: linear-gradient(to right, #ab5821 0%, #eb8b00 25%, #e6c681 50%, #eb8b00 75%, #ab5821 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab5821', endColorstr='#ab5821', GradientType=1 );
   border-image-slice: 1;
   background: #652419;
   background: radial-gradient(ellipse at center, #652419 0%, #432918 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#652419', endColorstr='#432918', GradientType=1 );
 }
 
 section {
@@ -232,7 +255,7 @@ section.wood {
   background-image: url("/assets/web/wood2.jpg");
   background-repeat: no-repeat;
   background-size: cover;
-  padding: 75px 0 5px;
+  padding: 75px 0;
 }
 
 article {
@@ -252,6 +275,8 @@ section.parchment {
   background-repeat: no-repeat;
   background-size: cover;
   padding: 75px 0;
+  position: relative;
+  height: 750px;
 }
 
 .game-wrapper {

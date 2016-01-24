@@ -11,6 +11,7 @@ header {
 	background-attachment: fixed;
 	background-size: cover;
 	width: 100%;
+	overflow: hidden;
 	height: 700px;
 	display: block;
 	text-align: center;
@@ -52,11 +53,11 @@ header {
 	width: 250px;
 }
 
-.gold {
+.stick {
 	position: absolute;
-	top: -50px;
-	left: 10px;
-	width: 250px;
+	top: 0px;
+	left: -100px;
+	width: 400px;
 }
 .rope {
 	position: absolute;
@@ -69,9 +70,9 @@ header {
 .crystal {
 	position: absolute;
 	z-index: 99;
-	width: 500px;
-	bottom: -130px;
-	right: 0;
+	width: 680px;
+	bottom: -200px;
+	right: -150px;
 }
 .sugarcane {
 	position: absolute;
@@ -86,6 +87,27 @@ header {
 	margin: -70px 0 50px;
 	border-radius: 50%;
 	box-shadow: 5px 5px 2em rgba(0,0,0,0.6);
+}
+
+.riet-luik {
+	background-image: url('/assets/web/riet-luik.png');
+	background-repeat: no-repeat;
+	height: 750px;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.biet-luik {
+	background-image: url('/assets/web/biet-luik.png');
+	background-repeat: no-repeat;
+	height: 750px;
+	width: 1000px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	// background-size: contain;
 }
 
 button {
@@ -132,7 +154,7 @@ button {
 	-webkit-border-image: -webkit-linear-gradient(left, rgba(171,88,33,1) 0%, rgba(235,139,0,1) 25%, rgba(230,198,129,1) 50%, rgba(235,139,0,1) 75%, rgba(171,88,33,1) 100%);
 	-o-border-image: -o-linear-gradient(left, rgba(171,88,33,1) 0%, rgba(235,139,0,1) 25%, rgba(230,198,129,1) 50%, rgba(235,139,0,1) 75%, rgba(171,88,33,1) 100%);
 	border-image: linear-gradient(to right, rgba(171,88,33,1) 0%, rgba(235,139,0,1) 25%, rgba(230,198,129,1) 50%, rgba(235,139,0,1) 75%, rgba(171,88,33,1) 100%);
-	// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab5821', endColorstr='#ab5821', GradientType=1 );
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab5821', endColorstr='#ab5821', GradientType=1 );
 	border-image-slice: 1;
 
 	background: rgba(101,36,25,1);
@@ -142,7 +164,7 @@ button {
 	background: -o-radial-gradient(center, ellipse cover, rgba(101,36,25,1) 0%, rgba(67,41,24,1) 100%);
 	background: -ms-radial-gradient(center, ellipse cover, rgba(101,36,25,1) 0%, rgba(67,41,24,1) 100%);
 	background: radial-gradient(ellipse at center, rgba(101,36,25,1) 0%, rgba(67,41,24,1) 100%);
-	// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#652419', endColorstr='#432918', GradientType=1 );
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#652419', endColorstr='#432918', GradientType=1 );
 }
 
 section {
@@ -174,8 +196,7 @@ section.wood {
 	background-image: url('/assets/web/wood2.jpg');
 	background-repeat: no-repeat;
 	background-size: cover;
-	// height: 700px;
-	padding: 75px 0 5px;
+	padding: 75px 0;
 }
 
 article {
@@ -193,8 +214,9 @@ section.parchment {
 	background-image: url('/assets/web/parchment.jpg');
 	background-repeat: no-repeat;
 	background-size: cover;
-	// height: 700px;
 	padding: 75px 0;
+	position: relative;
+	height: 750px;
 }
 
 .game-wrapper {

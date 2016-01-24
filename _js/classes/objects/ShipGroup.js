@@ -15,7 +15,7 @@ export default class ShipGroup extends Phaser.Group {
 
 		this.ship = game.add.sprite(0, -25, 'ship');
 		this.add(this.ship);
-		this.wheel = game.add.sprite(0 + this.ship.width/2, game.height-80, 'wiel');
+		this.wheel = game.add.sprite(0 + this.ship.width/2, game.height-100, 'wiel');
 		this.wheel.anchor.set(0.5);
 		this.add(this.wheel);
 		this.sails();

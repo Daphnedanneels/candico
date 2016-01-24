@@ -1,6 +1,6 @@
-export default class GameOver extends Phaser.State{
+export default class Won extends Phaser.State{
 	create(){
-		console.log('GameOver');
+		console.log('Won');
 		// this.gameOverText = this.game.add.text();
 
 		this.playButton = this.game.add.button(this.game.width/2, this.game.height/2 - 3.5, 'button', this.play, this);

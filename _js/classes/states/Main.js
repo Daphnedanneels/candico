@@ -26,21 +26,25 @@ export default class Main extends Phaser.State{
 		this.direction = 1;
 		this.snelheid = 1;
 		this.directionToPull = 1;
+		this.previousDirectionToPull = -1;
 		this.leftSail = false;
 		this.rightSail = false;
 		this.currentDistance = 0;
 		this.sailLeftY = -160;
 		this.sailRightY = -160;
 		this.timeCounter = 0;
-		this.timeLeft = 180;
+		this.timeLeft = 60;
 		this.distanceLeft = 300000;
 		this.totalDistance = 300000;
 		this.scrollX = 100;
 		this.scrollY = 30;
+		this.rightDown = false;
+		this.leftDown = false;
 		// this.xPosOnScreen = -1000;
 
-		this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.W);
-    	this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.X);
+		this.cursors = this.game.input.keyboard.createCursorKeys();
+		this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+		this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
     	this.sun = this.game.add.sprite(-100, -50, 'sun');
     	this.cloudBackground = new CloudBackground(this.game, 0, 0, 850, 200);
@@ -56,18 +60,18 @@ export default class Main extends Phaser.State{
 		//TODO: sails in shipGroup steken.
 		this.sailButtons();
 		
-		this.windroos = this.game.add.sprite(40, this.game.height - 100, 'windroos');
-		this.kmh = this.game.add.text(100,this.game.height - 85, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.yourSpeed = this.game.add.text(this.game.width - 205,this.game.height - 70, "", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.windroos = this.game.add.sprite(60, this.game.height - 120, 'windroos');
+		this.kmh = this.game.add.text(130,this.game.height - 100, "", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.yourSpeed = this.game.add.text(this.game.width - 205,this.game.height - 100, "", { font: '16px helvetica', fill: '#FFFFFF' });
 		this.speedUpText = this.game.add.text(this.game.width - 205,this.game.height - 95, "", { font: '16px helvetica', fill: '#FFFFFF' });
 		this.distanceText = this.game.add.text(40, 60, "Je hebt nog " + this.distanceLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.timeLeftText = this.game.add.text(40, 40, "Je hebt nog " + this.timeLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.timeLeftText = this.game.add.text(40, 40, "" + this.timeLeft + "", { font: '24px Rationale', fill: '#FFFFFF' });
 
 		this.changeDirection();
 		//per seconde de timeCounter omhoog -> max. 180 seconden.
 		this.game.time.events.loop(Phaser.Timer.SECOND, this.updateTime, this);
 		this.game.time.events.loop(2000, this.changeWindVector, this);
-		this.game.time.events.loop(10000, this.changeDirection, this);
+		this.game.time.events.loop(5000, this.changeDirection, this);
 		this.game.time.events.loop(15000, this.changeRouteDirection, this);
 
 		this.frame = this.game.add.sprite(0,0, 'frame');
@@ -75,12 +79,7 @@ export default class Main extends Phaser.State{
 	
 	update(){
 		this.shipSpeed = (180 - Math.abs(this.navigatie01.angle))/4.5; //km/h
-		if(this.shipSpeed < 30){
-			this.speedUpText.setText("please speed up!");
-		} else {
-			this.speedUpText.setText("going steady");
-		}
-		this.yourSpeed.setText("you are going " + Math.floor(this.shipSpeed) + " km/h");
+		this.yourSpeed.setText("Snelheid: " + Math.floor(this.shipSpeed*0.55) + " knopen");
 
 		//Navigatie02 draaisysteem (n-o-z-w)
 		this.navigatie02.angle = this.previousRouteDegree;
@@ -93,56 +92,23 @@ export default class Main extends Phaser.State{
 		this.xPosOnScreen = Math.floor((this.angleDifference - 110) * 7.14);
 		this.sun.x = -100 + this.xPosOnScreen;
 
-		if(this.leftKey.isDown){ 
-			this.navigatie01.angle -= 0.45;
-			this.ship.wheel.angle --;
-			// this.clouds.x -= 0.8;
-			this.scrollX --;
-		}else if(this.rightKey.isDown){ 
-			this.navigatie01.angle += 0.45;
-			this.ship.wheel.angle ++;
-			// this.clouds.x -= 0.8;
-			this.scrollX ++;
-		}
-
 		//adjust sails
-		this.leftButton.events.onInputDown.add(this.leftHandler, this);
-    	this.rightButton.events.onInputDown.add(this.rightHandler, this);
-    	if(this.ship.leftSail == true){
-    		if(this.ship.leftSailButton.y < -50){
-    			this.ship.leftSailButton.y ++;
-    		}
-    		//hoe lager zijl, hoe groter boostkracht
-    		this.boostSpeed = (200 + this.ship.leftSailButton.y)/145;
-    		this.navigatie01.angle -= this.boostSpeed;
-    	} else {
-    		if(this.ship.leftSailButton.y > -200){
-    			this.ship.leftSailButton.y --;
-    		}
-    	}
-    	if(this.ship.rightSail == true){
-    		this.navigatie01.angle += 0.55;
-    		if(this.ship.rightSailButton.y < -50){
-    			this.ship.rightSailButton.y ++;
-    		}
-    	} else {
-    		if(this.ship.rightSailButton.y > -200){
-    			this.ship.rightSailButton.y --;
-    		}
-    	}
+		this.adjustSails();
 
 		//pull ship!
 		this.currentSpeed = this.directionToPull*(this.windSpeed/2)/200;
 		this.navigatie01.angle += this.currentSpeed;
+		this.ship.wheel.angle += this.currentSpeed*2;
 
-		this.steerSpeed = this.directionToPull*(this.windSpeed/2)/100;
+		this.steerSpeed = this.directionToPull*(this.windSpeed/2)/200;
+
 		if(this.scrollX < 200 && this.scrollX > -200){
 			this.scrollX += this.steerSpeed;
+		}else if(this.scrollX < -200){
+			this.scrollX = -199;
 		}else {
-			this.scrollX += this.directionToPull/100;
+			this.scrollX = 199;
 		}
-		// console.log(this.scrollX);
-
 
 		this.distanceMap();
 		//scrollX is afhankelijk van de windduwendesnelheid, het manueel bewegen van het schip
@@ -153,9 +119,21 @@ export default class Main extends Phaser.State{
 	    	water.changeScroll(this.scrollX, this.scrollY);
 		}, this);
 		
+		console.log(this.scrollX);
+	}
+
+	posOrNeg(value){
+		let lala;
+		if(value < 0){
+			lala = true;
+		} else {
+			lala = false;
+		}
+		return lala;
 	}
 
 	changeWindVector(){
+		this.previousDirectionToPull = this.directionToPull;
 		this.directionLala = this.game.rnd.integerInRange(0, 1);
 		switch(this.directionLala){
 			case 0:
@@ -174,7 +152,7 @@ export default class Main extends Phaser.State{
 
 	changeDirection(){
 		this.previousDegree = this.windDegrees;
-		this.windDegrees = this.game.rnd.integerInRange(this.previousDegree - 90, this.previousDegree + 90); //degrees
+		this.windDegrees = this.game.rnd.integerInRange(this.previousDegree - 120, this.previousDegree + 120); //degrees
 		
 		this.changeWindSpeed();
 		this.windDirection = this.determinDirection(this.windDegrees);
@@ -187,42 +165,50 @@ export default class Main extends Phaser.State{
 	}
 
 	distanceMap(){	
-		this.currentDistance += this.shipSpeed;
+		this.currentDistance += this.shipSpeed*2.2;
 		let mapDistance = this.currentDistance/this.totalDistance;
 		if(mapDistance >= 1){
-			console.log('You WON!!!');
+			this.game.state.start('Won');
 		}
 	}
-
-	getDirectionForDegree(degree) {
-		if(degree < 22){
-			direction = 'n';
-			this.windroos.frameName = 'sterren-01';
-		} else if(degree < 67){
-			direction = 'no';
-			this.windroos.frameName = 'sterren-05';
-		} else if(degree < 112){
-			direction = 'o';
-			this.windroos.frameName = 'sterren-03';
-		} else if(degree < 157){
-			direction = 'zo';
-			this.windroos.frameName = 'sterren-06';
-		} else if(degree < 202){
-			direction = 'z';
-			this.windroos.frameName = 'sterren-04';
-		} else if(degree < 247){
-			direction = 'zw';
-			this.windroos.frameName = 'sterren-08';
-		} else if(degree < 292){
-			direction = 'w';
-			this.windroos.frameName = 'sterren-02';
-		} else if(degree < 337){
-			direction = 'nw';
-			this.windroos.frameName = 'sterren-07';
-		} else { // degree > 337
-			direction = 'n';
-			this.windroos.frameName = 'sterren-01';
-		}
+	adjustSails(){
+		this.leftButton.events.onInputDown.add(this.leftHandler, this);
+    	this.rightButton.events.onInputDown.add(this.rightHandler, this);
+    	this.leftKey.onDown.add(this.leftHandler, this);
+    	this.rightKey.onDown.add(this.rightHandler, this);
+    	if(this.ship.leftSail == true){
+    		if(this.ship.leftSailButton.y < -50){
+    			this.ship.leftSailButton.y ++;
+    		}
+    		//hoe lager zijl, hoe groter boostkracht
+    		this.boostSpeed = (200 + this.ship.leftSailButton.y)/145;
+    		this.navigatie01.angle -= this.boostSpeed;
+    		if(this.scrollX > 0){
+    			this.scrollX -= this.boostSpeed*7;
+    		}else {
+    			this.scrollX -= this.boostSpeed;
+    		}
+    	} else {
+    		if(this.ship.leftSailButton.y > -120){
+    			this.ship.leftSailButton.y --;
+    		}
+    	}
+    	if(this.ship.rightSail == true){
+    		if(this.ship.rightSailButton.y < -50){
+    			this.ship.rightSailButton.y ++;
+    		}
+    		this.boostSpeed = (200 + this.ship.rightSailButton.y)/145;
+    		this.navigatie01.angle += this.boostSpeed;
+    		if(this.scrollX < 0){
+    			this.scrollX += this.boostSpeed*7;
+    		}else {
+    			this.scrollX += this.boostSpeed;
+    		}
+    	} else {
+    		if(this.ship.rightSailButton.y > -120){
+    			this.ship.rightSailButton.y --;
+    		}
+    	}
 	}
 
 	determinDirection(degree){
@@ -230,35 +216,35 @@ export default class Main extends Phaser.State{
 
 		if(degree > 337 || degree < 22){
 			direction = 'n';
-			this.windroos.frameName = 'sterren-01';
+			this.windroos.frameName = 'windroos-01';
 		}
 		if(degree > 22 && degree < 67){
 			direction = 'no';
-			this.windroos.frameName = 'sterren-05';
+			this.windroos.frameName = 'windroos-05';
 		}
 		if(degree > 67 && degree < 112){
 			direction = 'o';
-			this.windroos.frameName = 'sterren-03';
+			this.windroos.frameName = 'windroos-03';
 		}
 		if(degree > 122 && degree < 157){
 			direction = 'zo';
-			this.windroos.frameName = 'sterren-06';
+			this.windroos.frameName = 'windroos-06';
 		}
 		if(degree > 157 && degree < 202){
 			direction = 'z';
-			this.windroos.frameName = 'sterren-04';
+			this.windroos.frameName = 'windroos-04';
 		}
 		if(degree > 202 && degree < 247){
 			direction = 'zw';
-			this.windroos.frameName = 'sterren-08';
+			this.windroos.frameName = 'windroos-08';
 		}
 		if(degree > 247 && degree < 292){
 			direction = 'w';
-			this.windroos.frameName = 'sterren-02';
+			this.windroos.frameName = 'windroos-02';
 		}
 		if(degree > 292 && degree < 337){
 			direction = 'nw';
-			this.windroos.frameName = 'sterren-07';
+			this.windroos.frameName = 'windroos-07';
 		}
 		return direction;
 	}
@@ -288,18 +274,14 @@ export default class Main extends Phaser.State{
 		this.ship.leftSail = false;
 		this.leftButton.frame = 0;
 	}
-	speedUpdate(){
-		this.yolo = this.game.rnd.integerInRange(0,500);
-		return this.yolo;
-	}
 	updateTime(){
 		this.timeCounter++;
-		this.timeLeft = 180-this.timeCounter;
+		this.timeLeft = 60-this.timeCounter;
 		if(this.timeLeft == 0){
 			this.gameOver();
 		}
 		this.distanceLeft = Math.floor(this.totalDistance - this.currentDistance);
-		this.timeLeftText.setText('Je hebt nog ' + this.timeLeft + ' seconden');
+		this.timeLeftText.setText("" + this.timeLeft + "");
 		this.distanceText.setText('Nog ' + this.distanceLeft + ' meter te gaan');
 	}
 	sailButtons(){

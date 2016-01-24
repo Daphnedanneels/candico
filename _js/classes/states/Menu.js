@@ -18,6 +18,12 @@ export default class Menu extends Phaser.State{
 		this.playText = this.game.add.text(this.game.width/2, this.game.height/2, "SPEEL NU", { font: '24px fontname', fill: '#F5E2C0' });
 		this.playText.anchor.setTo(0.5);
 
+		this.controlsButton = this.game.add.button(this.game.width - 200, this.game.height - 100, 'button', this.controls, this);
+		this.controlsButton.anchor.setTo(0.5);
+		this.controlsButton.scale.setTo(0.35);
+		this.controlsText = this.game.add.text(this.game.width - 200, this.game.height - 97, "CONTROLS", { font: '18px fontname', fill: '#F5E2C0' });
+		this.controlsText.anchor.setTo(0.5);
+
 		this.frame = this.game.add.sprite(0,0, 'frame');
 	}
 	
@@ -26,5 +32,8 @@ export default class Menu extends Phaser.State{
 	}
 	play(){
 		this.game.state.start('Main');
+	}
+	controls(){
+		this.game.state.start('Controls');
 	}
 }
