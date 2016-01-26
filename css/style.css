@@ -64,6 +64,8 @@ main {
 body {
   font-family: 'Minion Pro', Helvetica, Arial, sans-serif;
   font-weight: 200;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 header {
@@ -71,7 +73,6 @@ header {
   background-attachment: fixed;
   background-size: cover;
   width: 100%;
-  overflow: hidden;
   height: 700px;
   display: block;
   text-align: center;
@@ -86,8 +87,8 @@ header img {
 header h1 {
   background-image: url("/assets/web/candico.png");
   background-repeat: no-repeat;
-  height: 250px;
-  width: 760px;
+  height: 258px;
+  width: 826px;
   margin: 120px auto 0;
 }
 
@@ -120,17 +121,18 @@ header h2 {
 
 .stick {
   position: absolute;
-  top: 0px;
-  left: -100px;
-  width: 400px;
+  z-index: 99;
+  bottom: -160px;
+  left: -70px;
+  width: 560px;
 }
 
 .rope {
   position: absolute;
   z-index: 99;
-  width: 250px;
+  width: 320px;
   bottom: -120px;
-  right: 0;
+  right: -30px;
 }
 
 .crystal {
@@ -144,70 +146,60 @@ header h2 {
 .sugarcane {
   position: absolute;
   z-index: 99;
+  width: 550px;
+  bottom: -100px;
+  left: -120px;
+}
+
+.gold {
+  position: absolute;
+  z-index: 199;
+  width: 350px;
+  bottom: -150px;
+  left: 0px;
+}
+
+.biet {
+  position: absolute;
+  z-index: 99;
   width: 500px;
-  bottom: -130px;
-  left: -50px;
+  bottom: -180px;
+  right: -60px;
+}
+
+.verpakking {
+  position: absolute;
+  z-index: 99;
+  bottom: -60px;
+  right: 100px;
+  width: 550px;
 }
 
 .streek {
   width: 130px;
-  margin: -70px 0 50px;
+  margin: -70px 0 0;
   border-radius: 50%;
   box-shadow: 5px 5px 2em rgba(0, 0, 0, 0.6);
 }
 
-.riet-luik {
-  background-image: url("/assets/web/riet-luik.png");
-  background-repeat: no-repeat;
-  height: 750px;
-  width: 100%;
+.pijl {
   position: absolute;
-  top: 0;
-  left: 0;
+  background-image: url("/assets/web/pijltje.png");
+  width: 118px;
+  height: 137px;
 }
 
-.biet-luik {
-  background-image: url("/assets/web/biet-luik.png");
-  background-repeat: no-repeat;
-  height: 750px;
-  width: 1000px;
-  position: absolute;
-  top: 0;
-  right: 0;
+.pijl.rechts {
+  right: 170px;
+  top: 230px;
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
-button {
-  background: none;
-  border: none;
-  background-image: url("/assets/web/button.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  width: 300px;
-  padding: 25px 0;
-  color: #F5E2C0;
-  font-family: 'CharlemagneStd-Bold';
-  font-size: 1.4em;
-  margin-top: 50px;
-}
-
-.overlay {
-  width: 100%;
-  height: 600px;
-  position: absolute;
-}
-
-.overlay.navy {
-  background-image: url("/assets/web/navy.png");
-  background-position: bottom center;
-  background-size: cover;
-  opacity: 0.2;
-}
-
-.overlay.factory {
-  background-image: url("/assets/web/factory.png");
-  background-position: bottom center;
-  background-size: cover;
-  opacity: 0.2;
+.pijl.links {
+  left: 200px;
+  top: 120px;
 }
 
 .candico-box {
@@ -215,11 +207,48 @@ button {
   border-top: 5px solid #ab5821;
   border-bottom: 5px solid #ab5821;
   border-image: linear-gradient(to right, #ab5821 0%, #eb8b00 25%, #e6c681 50%, #eb8b00 75%, #ab5821 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ab5821', endColorstr='#ab5821', GradientType=1 );
   border-image-slice: 1;
-  background: #652419;
+  /*background: rgba(101,36,25,1);*/
   background: radial-gradient(ellipse at center, #652419 0%, #432918 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#652419', endColorstr='#432918', GradientType=1 );
+}
+
+.candico-box.navy:before {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  background-image: url("/assets/web/navy.jpg");
+  background-position: bottom center;
+  background-size: cover;
+}
+
+.candico-box.factory:before {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  background-image: url("/assets/web/factory.jpg");
+  background-position: bottom center;
+  background-size: cover;
+}
+
+.candico-box.verpakkingen:before {
+  content: ' ';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  background-image: url("/assets/web/fields.jpg");
+  background-position: bottom center;
+  background-size: cover;
 }
 
 section {
@@ -230,6 +259,11 @@ section {
 
 section .center-wrapper {
   padding: 110px 0;
+}
+
+section h1, section p, section .underline, section button {
+  position: relative;
+  z-index: 99;
 }
 
 section h1 {
@@ -251,10 +285,23 @@ section p {
   line-height: 1.2em;
 }
 
+section button {
+  background: none;
+  border: none;
+  background-image: url("/assets/web/button.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  width: 300px;
+  padding: 30px 0;
+  color: #DCB975;
+  font-family: 'CharlemagneStd-Bold';
+  font-size: 2em;
+  margin-top: 50px;
+}
+
 section.wood {
   background-image: url("/assets/web/wood2.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
+  background-repeat: repeat;
   padding: 75px 0;
 }
 
@@ -270,17 +317,71 @@ article {
   padding: 0;
 }
 
-section.parchment {
-  background-image: url("/assets/web/parchment.jpg");
+section.beetfactory {
+  background-image: url("/assets/web/weetje-achtergrond.png");
   background-repeat: no-repeat;
   background-size: cover;
-  padding: 75px 0;
+  background-position: bottom center;
+  padding: 80px 0 160px;
   position: relative;
-  height: 750px;
+}
+
+section.beetfactory h1 {
+  background-image: url("/assets/web/weetje.png");
+  background-repeat: no-repeat;
+  height: 160px;
+  width: 724px;
+  margin: 120px auto 0;
+}
+
+section.beetfactory h1 > span {
+  display: none;
+}
+
+section.beetfactory p {
+  font-size: 1.8em;
+}
+
+section.verpakkingen {
+  padding: 150px 0;
+}
+
+section.verpakkingen p {
+  margin-left: 300px;
+  text-align: left;
+  color: #B2805E;
+  width: 450px;
+  font-size: 1.8em;
+  line-height: 1.4em;
+}
+
+section.verpakkingen a {
+  color: #DD6A00;
+}
+
+section.verpakkingen h1 {
+  background-image: url("/assets/web/probeer.png");
+  background-repeat: no-repeat;
+  height: 315px;
+  width: 630px;
+  margin-left: 300px;
+}
+
+section.verpakkingen h1 > span {
+  display: none;
 }
 
 .game-wrapper {
   width: 850px;
   margin: 0 auto;
   box-shadow: 0 0 2em black;
+}
+
+footer {
+  height: 50px;
+}
+
+footer p {
+  font-size: 1.4em;
+  margin: -25px 0 0 30px;
 }

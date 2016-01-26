@@ -3,19 +3,21 @@ export default class Water extends Phaser.TileSprite {
 	    super(game, x, y, 1800, 150, 'water');
 	    game.add.existing(this);
 
+	    this.game.physics.arcade.enableBody(this); 
+	    this.enableBody = true;
+
 	    this.x = x;
 	    this.game = game;
 
-	    this.scale.setTo(1, scale);
 	    this.snelheid = 1;
 	    this.direction = 1;
 	    this.waterMovement = randomMove;
 	}
 	update(){
 		this.x += this.waterMove()/30;
-		// this.y ++;
+		this.scale.setTo(1, ((this.y-120)/100));
 	}
-	changeScroll(richtingX, richtingY){
+	changeScroll(richtingX){
 		this.autoScroll(richtingX, 0);
 	}
 	waterMove(){

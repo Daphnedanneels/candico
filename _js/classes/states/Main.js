@@ -6,7 +6,7 @@ import ShipGroup from '../objects/ShipGroup';
 
 export default class Main extends Phaser.State{
 	preload(){
-
+		this.game.time.advancedTiming = true;
 	}
 
 	create(){
@@ -40,9 +40,10 @@ export default class Main extends Phaser.State{
 		this.scrollY = 30;
 		this.rightDown = false;
 		this.leftDown = false;
+		this.knopenAngle = 20;
+		this.havenScale = 0;
 		// this.xPosOnScreen = -1000;
 
-		this.cursors = this.game.input.keyboard.createCursorKeys();
 		this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 		this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
@@ -50,36 +51,43 @@ export default class Main extends Phaser.State{
     	this.cloudBackground = new CloudBackground(this.game, 0, 0, 850, 200);
 		this.game.add.existing(this.cloudBackground);
 
+		this.haven = this.game.add.sprite(this.game.width/2, 150, 'haven');
+		this.haven.anchor.setTo(0.5, 0.5);
+		this.waterBackground = this.game.add.sprite(0, 155, 'waterbackground');
+
 		this.waterGroup = new WaterGroup(this.game, -150, 0);
 
 		this.ship = new ShipGroup(this.game);
 
-		//TODO: navigation in shipGroup steken.
 		this.navigation();
+		this.knopen();
 
 		//TODO: sails in shipGroup steken.
 		this.sailButtons();
 		
-		this.windroos = this.game.add.sprite(60, this.game.height - 120, 'windroos');
-		this.kmh = this.game.add.text(130,this.game.height - 100, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.yourSpeed = this.game.add.text(this.game.width - 205,this.game.height - 100, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.speedUpText = this.game.add.text(this.game.width - 205,this.game.height - 95, "", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.distanceText = this.game.add.text(40, 60, "Je hebt nog " + this.distanceLeft + " seconden", { font: '16px helvetica', fill: '#FFFFFF' });
-		this.timeLeftText = this.game.add.text(40, 40, "" + this.timeLeft + "", { font: '24px Rationale', fill: '#FFFFFF' });
+		this.windroos = this.game.add.sprite(50, 50, 'windroos');
+		// this.kmh = this.game.add.text(130,30, "", { font: '16px helvetica', fill: '#FFFFFF' });
+		this.timeLeftText = this.game.add.text(60, this.game.height - 90, "" + this.timeLeft + "", { font: '34px Rationale', fill: '#D2231E' });
+		this.hurryText = this.game.add.text(this.game.width/2, 180, "", { font: '60px Rationale', fill: '#D2231E' });
+		this.hurryText.anchor.set(0.5);
 
 		this.changeDirection();
 		//per seconde de timeCounter omhoog -> max. 180 seconden.
 		this.game.time.events.loop(Phaser.Timer.SECOND, this.updateTime, this);
-		this.game.time.events.loop(2000, this.changeWindVector, this);
-		this.game.time.events.loop(5000, this.changeDirection, this);
+		this.game.time.events.loop(3500, this.changeWindVector, this);
+		this.game.time.events.loop(3500, this.changeDirection, this);
 		this.game.time.events.loop(15000, this.changeRouteDirection, this);
 
 		this.frame = this.game.add.sprite(0,0, 'frame');
 	}
 	
 	update(){
+		if(this.havenScale <= 1){
+			this.havenScale += 0.0005;
+		}
+	
+		this.haven.scale.setTo(this.havenScale);
 		this.shipSpeed = (180 - Math.abs(this.navigatie01.angle))/4.5; //km/h
-		this.yourSpeed.setText("Snelheid: " + Math.floor(this.shipSpeed*0.55) + " knopen");
 
 		//Navigatie02 draaisysteem (n-o-z-w)
 		this.navigatie02.angle = this.previousRouteDegree;
@@ -100,7 +108,7 @@ export default class Main extends Phaser.State{
 		this.navigatie01.angle += this.currentSpeed;
 		this.ship.wheel.angle += this.currentSpeed*2;
 
-		this.steerSpeed = this.directionToPull*(this.windSpeed/2)/200;
+		this.steerSpeed = this.directionToPull*(this.windSpeed/2)/100;
 
 		if(this.scrollX < 200 && this.scrollX > -200){
 			this.scrollX += this.steerSpeed;
@@ -110,16 +118,18 @@ export default class Main extends Phaser.State{
 			this.scrollX = 199;
 		}
 
+		console.log(this.shipSpeed/2);
+		this.knopenAngle = (this.shipSpeed)*6.5; //0-40
+		this.knopenwijzer.angle = this.knopenAngle;
+
 		this.distanceMap();
 		//scrollX is afhankelijk van de windduwendesnelheid, het manueel bewegen van het schip
-		this.scrollY = this.shipSpeed*4; // JUIST
-		// this.waterBackground.changeScroll(this.scrollX, this.scrollY);
+		this.scrollY = this.shipSpeed/40; // JUIST
 		this.cloudBackground.changeScroll(this.scrollX/5, 0);
+		this.waterGroup.ySpeed = this.scrollY;
 		this.waterGroup.forEach(function(water) {
-	    	water.changeScroll(this.scrollX, this.scrollY);
+	    	water.changeScroll(this.scrollX);
 		}, this);
-		
-		console.log(this.scrollX);
 	}
 
 	posOrNeg(value){
@@ -161,7 +171,7 @@ export default class Main extends Phaser.State{
 	changeWindSpeed(){
 		this.previousSpeed = this.windSpeed;
 		this.windSpeed = this.game.rnd.integerInRange(100, 220); 
-		this.kmh.setText(Math.floor((250 - this.windSpeed)/2) + " km/h");
+		// this.kmh.setText(Math.floor((250 - this.windSpeed)/2) + " km/h");
 	}
 
 	distanceMap(){	
@@ -277,12 +287,15 @@ export default class Main extends Phaser.State{
 	updateTime(){
 		this.timeCounter++;
 		this.timeLeft = 60-this.timeCounter;
+		this.distanceLeft = Math.floor(this.totalDistance - this.currentDistance);
+		this.timeLeftText.setText("" + this.timeLeft + "");
+		if(this.timeLeft <= 10){
+			this.hurryText.setText("" + this.timeLeft + "");
+		}
 		if(this.timeLeft == 0){
 			this.gameOver();
 		}
-		this.distanceLeft = Math.floor(this.totalDistance - this.currentDistance);
-		this.timeLeftText.setText("" + this.timeLeft + "");
-		this.distanceText.setText('Nog ' + this.distanceLeft + ' meter te gaan');
+		
 	}
 	sailButtons(){
 		this.leftButton = this.game.add.sprite(this.game.width/2 - 150, 150, 'buttons', 0);
@@ -300,8 +313,18 @@ export default class Main extends Phaser.State{
 		this.navigatie01 = this.add.sprite(this.game.width - 115, 120, 'navigatie-01');
 		this.navigatie01.anchor.set(0.5);
 	}
+	knopen(){
+		this.knopenmeter = this.add.sprite(this.game.width - 115, this.game.height - 120, 'knopenmeter');
+		this.knopenmeter.anchor.set(0.5);
+		this.knopenwijzer = this.add.sprite(this.game.width - 115, this.game.height - 120, 'knopenwijzer');
+		this.knopenwijzer.anchor.set(0.5);
+	}
 
 	gameOver(){
 		this.game.state.start('GameOver');
 	}
+
+	render(){
+        this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
+    }
 }

@@ -16,6 +16,7 @@
     "eslint": "^1.6.0",
     "eslint-loader": "^1.0.0",
     "extract-text-webpack-plugin": "^0.8.2",
+    "image-webpack-loader": "^1.6.3",
     "node-sass": "^3.3.3",
     "postcss-loader": "^0.5.1",
     "sass-loader": "^2.0.1",
