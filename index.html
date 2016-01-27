@@ -6,7 +6,11 @@
 	<link rel="stylesheet" href="./css/style.css">
 	<script type="text/javascript">
 	  WebFontConfig = {
-	    google: { families: [ 'Rationale::latin' ] }
+	    google: { families: [ 'Rationale::latin' ] },
+	    custom: { 
+	    	families: [ 'CharlemagneStd-Bold' ],
+	    	urls: ['/assets/fonts/charlemagne.css']
+	    }
 	  };
 	  (function() {
 	    var wf = document.createElement('script');
@@ -26,50 +30,57 @@
 			<img id="parallax" class="compass" src="./assets/web/compass.png" alt="kompas">
 			<img id="parallax" class="key" src="./assets/web/key.png" alt="sleutel">
 			<img id="parallax" class="crystal" src="./assets/web/crystals.png" alt="kandij kristallen">
-			<h1><span>Candico</span></h1>
+			<h1><span>Kandij Cassonade</span></h1>
 			<h2>Met de toegevoegde smaak van een eeuwenoud avontuur</h2>
 		</header>
-		<section class="candico-box">
-			<div class="overlay navy"></div>
+		<section class="candico-box navy">
 			<div class="center-wrapper">
 				<h1>19e eeuw</h1>
 				<div class="underline"></div>
 				<p>Tot de 19e eeuw bestond er nog geen suikerproductie in Europa. Er werd enkel suiker gewonnen uit het suikerriet. De zoete rietstengels groeiden uitsluitend in verre tropische landen zodat suiker <em>synoniem</em> werd <b>voor invoer per schip</b>. De haven van Antwerpen zou hierbij snel een vooraanstaande rol innemen.</p>
 
 				<p>Een veelvoorkomend probleem vroeger, was dat de reis per schip vaak te lang duurde, waardoor de rietstengels tot gisting kwamen en dus onbruikbaar werden. Kruip nu in de huid van een 19e eeuwse kapitein met als taak de rietsuiker zo snel mogelijk in de Haven van Antwerpen te krijgen. Zoals je zult merken is een schip bevaren alles behalve simpel. Hou rekening met de windrichting en -snelheid en vergeet hierbij ook de zeilen niet!</p>
+				<a href="#game"><button>Ga op avontuur</button></a>
 			</div>
-			<img id="parallax" class="sugarcane" src="./assets/web/sugarcane.png" alt="rietsuiker">
+			<img id="parallax" class="gold" src="./assets/web/gold.png" alt="goud">
 		</section>
-		<section class="wood">
-			<img class="rope" src="./assets/web/rope.png" alt="touw">
+		<section class="wood" id="game">
+			<img id="parallax" class="rope" src="./assets/web/rope.png" alt="touw">
 			<div class="frame"></div>
 			<div class="game-wrapper"></div>
-			<!-- <button class="cant-win">Ik kan het spel niet winnen</button>
-			<article class="hidden">
-				<p>En maar goed ook, want had een kapitein in die tijd het wél beter gedaan, was het geheim van kandijsuiker misschien nooit ontdekt! Lees hieronder verder waarom.</p>
-			</article> -->
 		</section>
-		<section class="candico-box">
-			<!-- <img class="gold" src="./assets/web/gold.png" alt="goud"> -->
+		<section class="candico-box factory">
 			<div class="overlay factory"></div>
 			<div class="center-wrapper">
 				<h1>Een eeuwenoud proces</h1>
 				<div class="underline"></div>
-				<p>Kandijkristallen worden verkregen door in een oververzadigde warme suikeroplossing zeer langzaam grote kristallen te laten groeien op katoenen draden of houten stokjes. Dit duurt enkele weken. Na de kristallisatie van de kandijsuiker, wordt de resterende siroop gescheiden en verwerkt tot o.a. de befaamde kandijcassonade. De kandijcassonade ontstaat door het ‘zwieren’ van de resterende siroop na de kristallisatie, waaruit zowel de kandijcassonade als de kandijsiroop voort komen. Door het ‘zwieren’ vindt er een snelle kristallisatie plaats van nog bepaalde deeltjes. 
+				<p>Kandijkristallen worden verkregen door in een oververzadigde warme suikeroplossing zeer langzaam grote kristallen te laten groeien op katoenen draden of houten stokjes. Dit duurt enkele weken. Na de kristallisatie van de kandijsuiker, wordt de resterende siroop gescheiden en verwerkt tot o.a. de befaamde kandijcassonade.</p>
+				<p>De kandijcassonade ontstaat door het ‘zwieren’ van de resterende siroop na de kristallisatie, waaruit zowel de kandijcassonade als de kandijsiroop voort komen. Door het ‘zwieren’ vindt er een snelle kristallisatie plaats van nog bepaalde deeltjes. 
 				Deze gekristalliseerde deeltjes vormen onze befaamde kandijcassonade.</p>
-				<img class="stick" src="./assets/web/candystick.png" alt="kandij stick">
+				<img id="parallax" class="sugarcane" src="./assets/web/sugarcane.png" alt="rietsuiker">
 			</div>
 		</section>
-		<section class="parchment">
-			<div class="riet-luik"></div>
-			<div class="biet-luik"></div>
+		<section class="beetfactory">
+			<div class="pijl links"></div>
+			<div class="pijl rechts"></div>
+			<h1><span>Biet vs riet</span></h1>
+			<p>De dag van vandaag staat Antwerpen bekend om zijn talrijke suikerbietvelden. Toch wordt kandijcassonade nog steeds deels van rietsuiker gemaakt.
+			De hoeveelheden hiervan variëren navenant wat beschikbaar is.  De receptuur is dus nooit hetzelfde, wat het maken van kandijsuiker (en aanverwanten) net zo moeilijk maakt.
+			</p>
+			<img id="parallax" class="biet" src="./assets/web/biet.png" alt="biet">
+		</section>
+		<section class="candico-box verpakkingen">
+			<h1><span>Probeer nu onze smaken</span></h1>
+			<p>Onze candico kandijcassonade is dankzij zijn eeuwenoude receptuur en expertise een traditioneel streekproduct van Antwerpen. Nog steeds worden de kandijproducten volgens hetzelfde eeuwenoude procédé vervaardigd om hun authentieke kwaliteit en smaak te garanderen. 
+			Bezoek <a href="http://www.candico.be" target="_blank">www.candico.be</a> voor onze andere producten.</p>
+			<img class="verpakking" src="../assets/web/verpakking.png" alt="candico verpakking">
 		</section>
 		<section>
-			<img class="streek" src="../assets/web/streekproduct.png" alt="streekproduct label">
+			<a href="http://www.streekproduct.be" target="_blank"><img class="streek" src="../assets/web/streekproduct.png" alt="streekproduct label"></a>
 		</section>
 	</main>
 	<footer>
-		<p>© Candico 2015</p>
+		<p>© Candico 2016 - Daphné Danneels</p>
 	</footer>
 
 	<script src="js/vendors/phaser.js"></script>

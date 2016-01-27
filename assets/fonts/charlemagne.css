@@ -1,0 +1,7 @@
+@font-face {
+	font-family: 'Charlemagne-Std-Bold';
+	src: url('Charlemagne-Std-Bold.ttf') format('ttf'),
+		 url('Charlemagne-Std-Bold.otf') format('otf');
+	font-weight: normal;
+	font-style: normal;
+}

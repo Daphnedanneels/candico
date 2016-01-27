@@ -3,6 +3,12 @@
   ExpiresByType text/css                  "access plus 1 year"
   ExpiresByType application/javascript    "access plus 1 year"
   ExpiresActive On
+  
+  # Data
+  ExpiresByType application/json          "access plus 1 day"
+  ExpiresByType application/xml           "access plus 1 day"
+  ExpiresByType text/xml                  "access plus 1 day"
+
   ExpiresByType image/jpg "access plus 1 year"
   ExpiresByType image/jpeg "access plus 1 year"
   ExpiresByType image/gif "access plus 1 year"
@@ -15,4 +21,9 @@
   ExpiresDefault "access plus 2 days"
   ExpiresByType application/x-font-woff "access plus 1 month"
   ExpiresByType image/svg+xml "access plus 1 year
+</IfModule>
+<IfModule mod_deflate.c>
+    <filesMatch "\.(js|css|html|php)$">
+        SetOutputFilter DEFLATE
+    </filesMatch>
 </IfModule>
