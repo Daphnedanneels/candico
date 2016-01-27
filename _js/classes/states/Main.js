@@ -1,16 +1,14 @@
 import Water from '../objects/Water';
 import WaterGroup from '../objects/WaterGroup';
-import WaterBackground from '../objects/WaterBackground';
 import CloudBackground from '../objects/CloudBackground';
 import ShipGroup from '../objects/ShipGroup';
 
 export default class Main extends Phaser.State{
 	preload(){
-		this.game.time.advancedTiming = true;
+		
 	}
 
 	create(){
-		console.log('main');
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		this.game.stage.backgroundColor = '#BEE2E7';
 		this.background = this.game.add.sprite(0,0,'background');
@@ -42,17 +40,15 @@ export default class Main extends Phaser.State{
 		this.leftDown = false;
 		this.knopenAngle = 20;
 		this.havenScale = 0;
-		// this.xPosOnScreen = -1000;
 
 		this.leftKey = this.game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 		this.rightKey = this.game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
 
-    	this.sun = this.game.add.sprite(-100, -50, 'sun');
     	this.cloudBackground = new CloudBackground(this.game, 0, 0, 850, 200);
 		this.game.add.existing(this.cloudBackground);
 
-		this.haven = this.game.add.sprite(this.game.width/2, 150, 'haven');
-		this.haven.anchor.setTo(0.5, 0.5);
+		this.haven = this.game.add.sprite(this.game.width/2, 165, 'haven');
+		this.haven.anchor.setTo(0.5, 1);
 		this.waterBackground = this.game.add.sprite(0, 155, 'waterbackground');
 
 		this.waterGroup = new WaterGroup(this.game, -150, 0);
@@ -62,7 +58,6 @@ export default class Main extends Phaser.State{
 		this.navigation();
 		this.knopen();
 
-		//TODO: sails in shipGroup steken.
 		this.sailButtons();
 		
 		this.windroos = this.game.add.sprite(50, 50, 'windroos');
@@ -82,10 +77,8 @@ export default class Main extends Phaser.State{
 	}
 	
 	update(){
-		if(this.havenScale <= 1){
-			this.havenScale += 0.0005;
-		}
-	
+
+		this.havenScale = (this.currentDistance-200000)/100000;
 		this.haven.scale.setTo(this.havenScale);
 		this.shipSpeed = (180 - Math.abs(this.navigatie01.angle))/4.5; //km/h
 
@@ -98,7 +91,6 @@ export default class Main extends Phaser.State{
 		//zonsysteem
 		this.angleDifference = this.navigatie02.angle - this.navigatie01.angle;
 		this.xPosOnScreen = Math.floor((this.angleDifference - 110) * 7.14);
-		this.sun.x = -100 + this.xPosOnScreen;
 
 		//adjust sails
 		this.adjustSails();
@@ -118,7 +110,6 @@ export default class Main extends Phaser.State{
 			this.scrollX = 199;
 		}
 
-		console.log(this.shipSpeed/2);
 		this.knopenAngle = (this.shipSpeed)*6.5; //0-40
 		this.knopenwijzer.angle = this.knopenAngle;
 
@@ -133,13 +124,13 @@ export default class Main extends Phaser.State{
 	}
 
 	posOrNeg(value){
-		let lala;
+		let direction;
 		if(value < 0){
-			lala = true;
+			direction = true;
 		} else {
-			lala = false;
+			direction = false;
 		}
-		return lala;
+		return direction;
 	}
 
 	changeWindVector(){
@@ -175,8 +166,9 @@ export default class Main extends Phaser.State{
 	}
 
 	distanceMap(){	
-		this.currentDistance += this.shipSpeed*2.2;
+		this.currentDistance += this.shipSpeed*2.35;
 		let mapDistance = this.currentDistance/this.totalDistance;
+		// this.havenScale = (this.currentDistance-200000)/100000;
 		if(mapDistance >= 1){
 			this.game.state.start('Won');
 		}
@@ -323,8 +315,4 @@ export default class Main extends Phaser.State{
 	gameOver(){
 		this.game.state.start('GameOver');
 	}
-
-	render(){
-        this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
-    }
 }

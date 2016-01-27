@@ -62,14 +62,14 @@ main {
 }
 
 body {
-  font-family: 'Minion Pro', Helvetica, Arial, sans-serif;
+  font-family: "Goudy Old Style",Garamond,"Big Caslon","Times New Roman",serif;
   font-weight: 200;
   width: 100%;
   overflow-x: hidden;
 }
 
 header {
-  background-image: url("/assets/web/header.png");
+  background-image: url("/assets/web/header.jpg");
   background-attachment: fixed;
   background-size: cover;
   width: 100%;
@@ -208,8 +208,7 @@ header h2 {
   border-bottom: 5px solid #ab5821;
   border-image: linear-gradient(to right, #ab5821 0%, #eb8b00 25%, #e6c681 50%, #eb8b00 75%, #ab5821 100%);
   border-image-slice: 1;
-  /*background: rgba(101,36,25,1);*/
-  background: radial-gradient(ellipse at center, #652419 0%, #432918 100%);
+  background-color: #552217;
 }
 
 .candico-box.navy:before {
@@ -281,8 +280,8 @@ section .underline {
 section p {
   width: 500px;
   margin: 15px auto;
-  font-size: 1.6em;
-  line-height: 1.2em;
+  font-size: 1.8em;
+  line-height: 1.4em;
 }
 
 section button {
@@ -297,18 +296,18 @@ section button {
   font-family: 'CharlemagneStd-Bold';
   font-size: 2em;
   margin-top: 50px;
+  transition: all 0.5s ease;
+}
+
+section button:hover {
+  background-image: url("/assets/web/button-hover.png");
+  color: #452013;
 }
 
 section.wood {
   background-image: url("/assets/web/wood2.jpg");
   background-repeat: repeat;
   padding: 75px 0;
-}
-
-article {
-  transition: all 2s ease;
-  opacity: 1;
-  padding: 20px 0;
 }
 
 .hidden {
@@ -318,7 +317,7 @@ article {
 }
 
 section.beetfactory {
-  background-image: url("/assets/web/weetje-achtergrond.png");
+  background-image: url("/assets/web/weetje-achtergrond.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: bottom center;
@@ -343,7 +342,7 @@ section.beetfactory p {
 }
 
 section.verpakkingen {
-  padding: 150px 0;
+  padding: 100px 0;
 }
 
 section.verpakkingen p {
@@ -351,8 +350,6 @@ section.verpakkingen p {
   text-align: left;
   color: #B2805E;
   width: 450px;
-  font-size: 1.8em;
-  line-height: 1.4em;
 }
 
 section.verpakkingen a {

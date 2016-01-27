@@ -2,14 +2,14 @@
 @import 'variables';
 
 body {
-	font-family: 'Minion Pro', Helvetica, Arial, sans-serif;
+	font-family: "Goudy Old Style",Garamond,"Big Caslon","Times New Roman",serif;
 	font-weight: 200;
 	width: 100%;
 	overflow-x: hidden;
 }
 
 header {
-	background-image: url('/assets/web/header.png');
+	background-image: url('/assets/web/header.jpg');
 	background-attachment: fixed;
 	background-size: cover;
 	width: 100%;
@@ -175,8 +175,7 @@ header {
 	border-image: linear-gradient(to right, rgba(171,88,33,1) 0%, rgba(235,139,0,1) 25%, rgba(230,198,129,1) 50%, rgba(235,139,0,1) 75%, rgba(171,88,33,1) 100%);
 	border-image-slice: 1;
 
-	/*background: rgba(101,36,25,1);*/
-	background: radial-gradient(ellipse at center, rgba(101,36,25,1) 0%, rgba(67,41,24,1) 100%);
+	background-color: #552217;
 }
 
 section {
@@ -203,8 +202,8 @@ section {
 	p{
 		width: 500px;
 		margin: 15px auto;
-		font-size: 1.6em;
-		line-height: 1.2em;
+		font-size: 1.8em;
+		line-height: 1.4em;
 	}
 	button {
 		background: none;
@@ -218,6 +217,11 @@ section {
 		font-family: 'CharlemagneStd-Bold';
 		font-size: 2em;
 		margin-top: 50px;
+		transition: all 0.5s ease;
+		&:hover {
+			background-image: url('/assets/web/button-hover.png');
+			color: $darkbrown;
+		}
 	}
 }
 
@@ -227,11 +231,6 @@ section.wood {
 	padding: 75px 0;
 }
 
-article {
-	transition: all 2s ease;
-	opacity: 1;
-	padding: 20px 0;
-}
 .hidden {
 	visibility: hidden;
 	opacity: 0;
@@ -239,7 +238,7 @@ article {
 }
 
 section.beetfactory {
-	background-image: url('/assets/web/weetje-achtergrond.png');
+	background-image: url('/assets/web/weetje-achtergrond.jpg');
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: bottom center;
@@ -261,14 +260,12 @@ section.beetfactory {
 }
 
 section.verpakkingen {
-	padding: 150px 0;
+	padding: 100px 0;
 	p{
 		margin-left: 300px;
 		text-align: left;
 		color: $brown;
 		width: 450px;
-		font-size: 1.8em;
-		line-height: 1.4em;
 	}
 	a {
 		color: #DD6A00;

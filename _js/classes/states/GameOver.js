@@ -1,7 +1,5 @@
 export default class GameOver extends Phaser.State{
 	create(){
-		console.log('GameOver');
-		// this.gameOverText = this.game.add.text();
 		this.background = this.game.add.sprite(0,0, 'gameoverbackground');
 		this.gameover = this.game.add.sprite(this.game.width/2,this.game.height/2-50, 'gameover');
 		this.gameover.anchor.setTo(0.5);
@@ -18,14 +16,10 @@ export default class GameOver extends Phaser.State{
 		this.playButton.anchor.setTo(0.5);
 		this.playButton.scale.setTo(0.4);
 		this.playButton.alpha = 0;
-		this.playText = this.game.add.text(this.game.width/2, this.game.height/2 + 150, "Ontdek waarom het niet lukt", { font: '14px CharlemagneStd-Bold', fill: '#E1C8A6' });
+		this.playText = this.game.add.text(this.game.width/2, this.game.height/2 + 165, "(Ontdek waarom het niet lukt)", { font: '14px CharlemagneStd-Bold', fill: '#E1C8A6' });
 		this.playText.anchor.setTo(0.5);
 
 		this.frame = this.game.add.sprite(0,0, 'frame');
-
-	}
-	
-	update(){
 
 	}
 
@@ -33,6 +27,6 @@ export default class GameOver extends Phaser.State{
 		this.game.state.start('Main');
 	}
 	reason(){
-
+		this.game.state.start('Won');
 	}
 }

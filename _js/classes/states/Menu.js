@@ -4,8 +4,6 @@ import CloudBackground from '../objects/CloudBackground';
 
 export default class Menu extends Phaser.State{
 	create(){
-		console.log('Menu');
-
 		this.background = this.game.add.sprite(0,0,'background');
 		this.cloudBackground = new CloudBackground(this.game, 0, 0, 850, 200);
 		this.game.add.existing(this.cloudBackground);
